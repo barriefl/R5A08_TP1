@@ -42,10 +42,10 @@ namespace R5A08_TP1.Models.EntityFramework
 
         [ForeignKey(nameof(TypeProduit.IdTypeProduit))]
         [InverseProperty(nameof(TypeProduit.ProduitsAssociesTypesProduit))]
-        public virtual TypeProduit TypeProduitNavigation { get; set; } = null!;
+        public virtual TypeProduit? TypeProduitNavigation { get; set; } = null!;
 
         [ForeignKey(nameof(Marque.IdMarque))]
         [InverseProperty(nameof(Marque.ProduitsAssociesMarques))]
-        public virtual Marque MarqueNavigation { get; set; } = null!;
+        public virtual Marque? MarqueNavigation { get; set; } = null!;
     }
 }

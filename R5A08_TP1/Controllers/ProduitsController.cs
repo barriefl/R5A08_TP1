@@ -67,7 +67,7 @@ namespace R5A08_TP1.Controllers
             }
         }
 
-        // GET: Produits/Post
+        // POST: Produits/Post
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -81,7 +81,7 @@ namespace R5A08_TP1.Controllers
             return CreatedAtAction("GetById", new { id = produit.IdProduit }, produit);
         }
 
-        // GET: Produits/Delete/5
+        // DELETE: Produits/Delete/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

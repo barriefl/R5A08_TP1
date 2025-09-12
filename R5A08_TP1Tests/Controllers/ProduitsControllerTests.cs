@@ -29,15 +29,8 @@ namespace R5A08_TP1.Controllers.Tests
             controller = new ProduitsController(dataRepository);
         }
 
-        [TestCleanup]
-        public void Cleanup()
-        {
-            context.Produits.RemoveRange(context.Produits);
-            context.SaveChanges();
-        }
-
         [TestMethod()]
-        public void GetUtilisateursTest()
+        public void ShouldGetProduct()
         {
             // Given : Un produit en base de données.
             Produit produitInDb = new Produit()
@@ -64,14 +57,43 @@ namespace R5A08_TP1.Controllers.Tests
         }
 
         [TestMethod()]
-        public void ProductShouldReturnNotFound()
+        public void GetProductShouldReturnNotFound()
         {
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
             ActionResult<Produit> action = controller.GetProduitById(0).Result;
 
-            // Then : On récupère le produit et le code de retour est 200.
+            // Then : On récupère le produit et le code de retour est 404.
             Assert.IsNull(action.Value);
             Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult));
+        }
+
+        [TestMethod()]
+        public void ShouldCreateProduct()
+        {
+            // Given : Un produit en base de données.
+            Produit produitInDb = new Produit()
+            {
+                NomProduit = "Chaise",
+                DescriptionProduit = "Une superbe chaise",
+                NomPhotoProduit = "Une superbe chaise bleu",
+                UriPhotoProduit = "https://ikea.fr/chaise.jpg"
+            };
+
+            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            ActionResult<Produit> action = controller.PostProduit(produitInDb).Result;
+
+            // Then : On récupère le produit et le code de retour est 200.
+            Produit productToGet = context.Produits.Where(p => p.NomProduit == "Chaise").FirstOrDefault();
+            Assert.IsInstanceOfType(action, typeof(ActionResult<Produit>), "Result n'est pas un action result.");
+            Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult), "Result n'est pas un CreatedAtActionResult.");
+            Assert.AreEqual(produitInDb, productToGet, "Les produits ne sont pas identiques.");
+        }      
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            context.Produits.RemoveRange(context.Produits);
+            context.SaveChanges();
         }
     }
 }
