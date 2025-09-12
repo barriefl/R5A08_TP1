@@ -154,6 +154,56 @@ namespace R5A08_TP1.Controllers.Tests
             Assert.IsInstanceOfType(action, typeof(NotFoundResult), "Result n'est pas un NotFoundResult.");
         }   
 
+        [TestMethod()]
+        public void ShouldUpdateProduct()
+        {
+            // Given : Un produit en base de données.
+            Produit produitInDb = new Produit()
+            {
+                NomProduit = "Chaise",
+                DescriptionProduit = "Une superbe chaise",
+                NomPhotoProduit = "Une superbe chaise bleu",
+                UriPhotoProduit = "https://ikea.fr/chaise.jpg"
+            };
+            context.Produits.Add(produitInDb);
+            context.SaveChanges();
+            Produit produitToUpdate = new Produit()
+            {
+                IdProduit = produitInDb.IdProduit,
+                NomProduit = "Chaise Modifiée",
+                DescriptionProduit = "Une superbe chaise modifiée",
+                NomPhotoProduit = "Une superbe chaise bleu modifiée",
+                UriPhotoProduit = "https://ikea.fr/chaise_modifiee.jpg"
+            };
+            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            IActionResult action = controller.PutProduit(produitInDb.IdProduit, produitToUpdate).Result;
+            // Then : On récupère le produit et le code de retour est 200.
+            Assert.IsInstanceOfType(action, typeof(NoContentResult), "Result n'est pas un NoContentResult.");
+            Produit productToGet = context.Produits.Where(p => p.IdProduit == produitInDb.IdProduit).FirstOrDefault();
+            Assert.AreEqual(produitToUpdate.NomProduit, productToGet.NomProduit, "Le nom du produit n'a pas été modifié.");
+            Assert.AreEqual(produitToUpdate.DescriptionProduit, productToGet.DescriptionProduit, "La description du produit n'a pas été modifiée.");
+            Assert.AreEqual(produitToUpdate.NomPhotoProduit, productToGet.NomPhotoProduit, "Le nom de la photo du produit n'a pas été modifié.");
+            Assert.AreEqual(produitToUpdate.UriPhotoProduit, productToGet.UriPhotoProduit, "L'uri de la photo du produit n'a pas été modifiée.");
+        }
+
+        [TestMethod()]
+        public void ShouldNotUpdateProductBecauseProductDoesNotExist()
+        {
+            // Given : Un produit en base de données.
+            Produit produitToUpdate = new Produit()
+            {
+                IdProduit = 0,
+                NomProduit = "Chaise Modifiée",
+                DescriptionProduit = "Une superbe chaise modifiée",
+                NomPhotoProduit = "Une superbe chaise bleu modifiée",
+                UriPhotoProduit = "https://ikea.fr/chaise_modifiee.jpg"
+            };
+            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            IActionResult action = controller.PutProduit(produitToUpdate.IdProduit, produitToUpdate).Result;
+            // Then : On récupère le produit et le code de retour est 404.
+            Assert.IsInstanceOfType(action, typeof(NotFoundResult), "Result n'est pas un NotFoundResult.");
+        }
+
         [TestCleanup]
         public void Cleanup()
         {

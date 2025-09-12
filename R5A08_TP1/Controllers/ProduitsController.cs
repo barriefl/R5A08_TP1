@@ -56,15 +56,12 @@ namespace R5A08_TP1.Controllers
                 return BadRequest();
             }
             var userToUpdate = await dataRepository.GetByIdAsync(id);
-            if (userToUpdate == null)
+            if (userToUpdate.Value == null)
             {
                 return NotFound();
             }
-            else
-            {
-                await dataRepository.UpdateAsync(userToUpdate.Value, produit);
-                return NoContent();
-            }
+            await dataRepository.UpdateAsync(userToUpdate.Value, produit);
+            return NoContent();
         }
 
         // POST: Produits/Post
