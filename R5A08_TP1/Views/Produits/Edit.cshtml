@@ -1,0 +1,74 @@
+﻿@model R5A08_TP1.Models.EntityFramework.Produit
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Produit</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IdProduit" />
+            <div class="form-group">
+                <label asp-for="IdMarque" class="control-label"></label>
+                <input asp-for="IdMarque" class="form-control" />
+                <span asp-validation-for="IdMarque" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdTypeProduit" class="control-label"></label>
+                <input asp-for="IdTypeProduit" class="form-control" />
+                <span asp-validation-for="IdTypeProduit" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NomProduit" class="control-label"></label>
+                <input asp-for="NomProduit" class="form-control" />
+                <span asp-validation-for="NomProduit" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DescriptionProduit" class="control-label"></label>
+                <input asp-for="DescriptionProduit" class="form-control" />
+                <span asp-validation-for="DescriptionProduit" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NomPhotoProduit" class="control-label"></label>
+                <input asp-for="NomPhotoProduit" class="form-control" />
+                <span asp-validation-for="NomPhotoProduit" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UriPhotoProduit" class="control-label"></label>
+                <input asp-for="UriPhotoProduit" class="form-control" />
+                <span asp-validation-for="UriPhotoProduit" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StockReelProduit" class="control-label"></label>
+                <input asp-for="StockReelProduit" class="form-control" />
+                <span asp-validation-for="StockReelProduit" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StockMinProduit" class="control-label"></label>
+                <input asp-for="StockMinProduit" class="form-control" />
+                <span asp-validation-for="StockMinProduit" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StockMaxProduit" class="control-label"></label>
+                <input asp-for="StockMaxProduit" class="form-control" />
+                <span asp-validation-for="StockMaxProduit" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

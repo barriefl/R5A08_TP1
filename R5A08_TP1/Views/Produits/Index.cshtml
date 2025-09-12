@@ -1,0 +1,83 @@
+﻿@model IEnumerable<R5A08_TP1.Models.EntityFramework.Produit>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IdMarque)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdTypeProduit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NomProduit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DescriptionProduit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NomPhotoProduit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UriPhotoProduit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StockReelProduit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StockMinProduit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StockMaxProduit)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdMarque)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdTypeProduit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NomProduit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DescriptionProduit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NomPhotoProduit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UriPhotoProduit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StockReelProduit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StockMinProduit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StockMaxProduit)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdProduit">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdProduit">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdProduit">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
