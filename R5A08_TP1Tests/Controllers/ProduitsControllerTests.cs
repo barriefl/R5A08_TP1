@@ -21,7 +21,7 @@ namespace R5A08_TP1.Controllers.Tests
         private IDataRepository<Produit> dataRepository;
 
         [TestInitialize]
-        public void InitialisationDesTests()
+        public void TestInitialize()
         {
             var builder = new DbContextOptionsBuilder<ProduitsDbContext>().UseNpgsql();
             context = new ProduitsDbContext();
@@ -57,6 +57,41 @@ namespace R5A08_TP1.Controllers.Tests
         }
 
         [TestMethod()]
+        public void ShouldGetAllProducts()
+        {
+            // Given : Deux produits en base de données.
+            Produit produitInDb1 = new Produit()
+            {
+                NomProduit = "Chaise",
+                DescriptionProduit = "Une superbe chaise",
+                NomPhotoProduit = "Une superbe chaise bleu",
+                UriPhotoProduit = "https://ikea.fr/chaise.jpg"
+            };
+            Produit produitInDb2 = new Produit()
+            {
+                NomProduit = "Table",
+                DescriptionProduit = "Une superbe table",
+                NomPhotoProduit = "Une superbe table ronde",
+                UriPhotoProduit = "https://ikea.fr/table.jpg"
+            };
+
+            context.Produits.Add(produitInDb1);
+            context.Produits.Add(produitInDb2);
+            context.SaveChanges();
+
+            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            ActionResult<IEnumerable<Produit>> action = controller.GetProduits().Result;
+
+            // Then : On récupère le produit et le code de retour est 200.
+            Assert.IsNotNull(action);
+            Assert.IsInstanceOfType(action.Value, typeof(IEnumerable<Produit>));
+            List<Produit> returnProducts = action.Value.ToList();
+            Assert.AreEqual(2, returnProducts.Count);
+            Assert.AreEqual(produitInDb1.NomProduit, returnProducts[0].NomProduit);
+            Assert.AreEqual(produitInDb2.NomProduit, returnProducts[1].NomProduit);
+        }
+
+        [TestMethod()]
         public void GetProductShouldReturnNotFound()
         {
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
@@ -83,11 +118,41 @@ namespace R5A08_TP1.Controllers.Tests
             ActionResult<Produit> action = controller.PostProduit(produitInDb).Result;
 
             // Then : On récupère le produit et le code de retour est 200.
-            Produit productToGet = context.Produits.Where(p => p.NomProduit == "Chaise").FirstOrDefault();
+            Produit productToGet = context.Produits.Where(p => p.IdProduit == produitInDb.IdProduit).FirstOrDefault();
             Assert.IsInstanceOfType(action, typeof(ActionResult<Produit>), "Result n'est pas un action result.");
             Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult), "Result n'est pas un CreatedAtActionResult.");
             Assert.AreEqual(produitInDb, productToGet, "Les produits ne sont pas identiques.");
-        }      
+        }
+
+        [TestMethod()]
+        public void ShouldDeleteProduct() 
+        { 
+            // Given : Un produit en base de données.
+            Produit produitInDb = new Produit()
+            {
+                NomProduit = "Chaise",
+                DescriptionProduit = "Une superbe chaise",
+                NomPhotoProduit = "Une superbe chaise bleu",
+                UriPhotoProduit = "https://ikea.fr/chaise.jpg"
+            };
+            context.Produits.Add(produitInDb);
+            context.SaveChanges();
+            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            IActionResult action = controller.DeleteProduit(produitInDb.IdProduit).Result;
+            // Then : On récupère le produit et le code de retour est 200.
+            Assert.IsInstanceOfType(action, typeof(NoContentResult), "Result n'est pas un OkObjectResult.");
+            Produit productToGet = context.Produits.Where(p => p.IdProduit == produitInDb.IdProduit).FirstOrDefault();
+            Assert.IsNull(productToGet, "Le produit n'a pas été supprimé.");
+        }
+
+        [TestMethod()]
+        public void ShouldNotDeleteProductBecauseProductDoesNotExist()
+        {
+            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            IActionResult action = controller.DeleteProduit(0).Result;
+            // Then : On récupère le produit et le code de retour est 404.
+            Assert.IsInstanceOfType(action, typeof(NotFoundResult), "Result n'est pas un NotFoundResult.");
+        }   
 
         [TestCleanup]
         public void Cleanup()

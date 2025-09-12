@@ -33,6 +33,8 @@ namespace R5A08_TP1.Models.DataManager
         }
         public async Task UpdateAsync(Produit produit, Produit entity)
         {
+            // produitsDbContext.Entry(entityToUpdate).CurrentValues.SetValues(entity);
+            // await context.SaveChangesAsync();
             produitsDbContext.Entry(produit).State = EntityState.Modified;
             produit.IdProduit = entity.IdProduit;
             produit.NomProduit = entity.NomProduit;

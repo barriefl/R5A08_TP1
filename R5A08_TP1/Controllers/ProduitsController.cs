@@ -88,7 +88,7 @@ namespace R5A08_TP1.Controllers
         public async Task<IActionResult> DeleteProduit(int id)
         {
             var produit = await dataRepository.GetByIdAsync(id);
-            if (produit == null)
+            if (produit.Value == null)
             {
                 return NotFound();
             }
