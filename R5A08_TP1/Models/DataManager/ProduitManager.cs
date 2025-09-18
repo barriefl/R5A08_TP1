@@ -33,20 +33,8 @@ namespace R5A08_TP1.Models.DataManager
         }
         public async Task UpdateAsync(Produit produit, Produit entity)
         {
-            // produitsDbContext.Produits.Attach(entityToUpdate);
-            // produitsDbContext.Entry(entityToUpdate).CurrentValues.SetValues(entity);
-            // await context.SaveChangesAsync();
-            produitsDbContext.Entry(produit).State = EntityState.Modified;
-            produit.IdProduit = entity.IdProduit;
-            produit.NomProduit = entity.NomProduit;
-            produit.DescriptionProduit = entity.DescriptionProduit;
-            produit.NomPhotoProduit = entity.NomPhotoProduit;
-            produit.UriPhotoProduit= entity.UriPhotoProduit;
-            produit.StockReelProduit = entity.StockReelProduit;
-            produit.StockMinProduit = entity.StockMinProduit;
-            produit.StockMaxProduit = entity.StockMaxProduit;
-            produit.TypeProduitNavigation = entity.TypeProduitNavigation;
-            produit.MarqueNavigation = entity.MarqueNavigation;
+            produitsDbContext.Produits.Attach(produit);
+            produitsDbContext.Entry(produit).CurrentValues.SetValues(entity);
             await produitsDbContext.SaveChangesAsync();
         }
         public async Task DeleteAsync(Produit produit)

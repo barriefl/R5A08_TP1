@@ -36,12 +36,12 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Produit>> GetProduitById(int id)
         {
-            var produit = await dataRepository.GetByIdAsync(id);
-            if (produit.Value == null)
+            var product = await dataRepository.GetByIdAsync(id);
+            if (product.Value == null)
             {
                 return NotFound();
             }
-            return produit;
+            return product;
         }
 
         // PUT: Produits/Put/5
@@ -49,18 +49,18 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PutProduit(int id, Produit produit)
+        public async Task<IActionResult> PutProduit(int id, Produit product)
         {
-            if (id != produit.IdProduit)
+            if (id != product.IdProduit)
             {
                 return BadRequest();
             }
-            var userToUpdate = await dataRepository.GetByIdAsync(id);
-            if (userToUpdate.Value == null)
+            var productToUpdate = await dataRepository.GetByIdAsync(id);
+            if (productToUpdate.Value == null)
             {
                 return NotFound();
             }
-            await dataRepository.UpdateAsync(userToUpdate.Value, produit);
+            await dataRepository.UpdateAsync(productToUpdate.Value, product);
             return NoContent();
         }
 
@@ -68,14 +68,14 @@ namespace R5A08_TP1.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Produit>> PostProduit(Produit produit)
+        public async Task<ActionResult<Produit>> PostProduit(Produit product)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            await dataRepository.AddAsync(produit);
-            return CreatedAtAction("GetById", new { id = produit.IdProduit }, produit);
+            await dataRepository.AddAsync(product);
+            return CreatedAtAction("GetById", new { id = product.IdProduit }, product);
         }
 
         // DELETE: Produits/Delete/5
@@ -84,12 +84,12 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteProduit(int id)
         {
-            var produit = await dataRepository.GetByIdAsync(id);
-            if (produit.Value == null)
+            var product = await dataRepository.GetByIdAsync(id);
+            if (product.Value == null)
             {
                 return NotFound();
             }
-            await dataRepository.DeleteAsync(produit.Value);
+            await dataRepository.DeleteAsync(product.Value);
             return NoContent();
         }
     }
