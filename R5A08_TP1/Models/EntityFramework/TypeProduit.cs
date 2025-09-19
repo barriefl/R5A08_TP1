@@ -12,7 +12,7 @@ namespace R5A08_TP1.Models.EntityFramework
         public int IdTypeProduit { get; set; }
 
         [Column("typr_nom")]
-        public string NomMarque { get; set; } = null!;
+        public string NomTypeProduit { get; set; } = null!;
 
         [InverseProperty(nameof(Produit.TypeProduitNavigation))]
         public virtual ICollection<Produit> ProduitsAssociesTypesProduit { get; set; } = new List<Produit>();
