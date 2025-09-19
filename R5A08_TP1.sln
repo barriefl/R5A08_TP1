@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R5A08_TP1", "R5A08_TP1\R5A0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R5A08_TP1Tests", "R5A08_TP1Tests\R5A08_TP1Tests.csproj", "{69A12B97-7B02-425B-AFDD-2C95500C27C0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp", "BlazorApp\BlazorApp.csproj", "{D0BCEF15-1D7F-4FBD-B281-1802DF753717}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{69A12B97-7B02-425B-AFDD-2C95500C27C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69A12B97-7B02-425B-AFDD-2C95500C27C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69A12B97-7B02-425B-AFDD-2C95500C27C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0BCEF15-1D7F-4FBD-B281-1802DF753717}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0BCEF15-1D7F-4FBD-B281-1802DF753717}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0BCEF15-1D7F-4FBD-B281-1802DF753717}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0BCEF15-1D7F-4FBD-B281-1802DF753717}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
