@@ -16,15 +16,15 @@ namespace R5A08_TP1.Controllers.Tests
     [TestClass()]
     public class ProduitsControllerTests
     {
-        private ProduitsDbContext context;
+        private AppDbContext context;
         private ProduitsController controller;
-        private IDataRepository<Produit> dataRepository;
+        private IDataRepository<Product> dataRepository;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            var builder = new DbContextOptionsBuilder<ProduitsDbContext>().UseNpgsql();
-            context = new ProduitsDbContext();
+            var builder = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql();
+            context = new AppDbContext();
             dataRepository = new ProduitManager(context);
             controller = new ProduitsController(dataRepository);
         }
@@ -33,7 +33,7 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldGetProduct()
         {
             // Given : Un produit en base de données.
-            Produit produitInDb = new Produit()
+            Product produitInDb = new Product()
             {
                 NomProduit = "Chaise",
                 DescriptionProduit = "Une superbe chaise",
@@ -41,17 +41,17 @@ namespace R5A08_TP1.Controllers.Tests
                 UriPhotoProduit = "https://ikea.fr/chaise.jpg"
             };
 
-            context.Produits.Add(produitInDb);
+            context.Products.Add(produitInDb);
             context.SaveChanges();
 
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
-            ActionResult<Produit> action = controller.GetProduitById(produitInDb.IdProduit).Result;
+            ActionResult<Product> action = controller.GetProduitById(produitInDb.IdProduit).Result;
 
             // Then : On récupère le produit et le code de retour est 200.
             Assert.IsNotNull(action);
-            Assert.IsInstanceOfType(action.Value, typeof(Produit));
+            Assert.IsInstanceOfType(action.Value, typeof(Product));
 
-            Produit returnProduct = action.Value;
+            Product returnProduct = action.Value;
             Assert.AreEqual(produitInDb.NomProduit, returnProduct.NomProduit);
             //Assert.IsInstanceOfType(action.Result, typeof(OkObjectResult));
         }
@@ -60,14 +60,14 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldGetAllProducts()
         {
             // Given : Deux produits en base de données.
-            Produit produitInDb1 = new Produit()
+            Product produitInDb1 = new Product()
             {
                 NomProduit = "Chaise",
                 DescriptionProduit = "Une superbe chaise",
                 NomPhotoProduit = "Une superbe chaise bleu",
                 UriPhotoProduit = "https://ikea.fr/chaise.jpg"
             };
-            Produit produitInDb2 = new Produit()
+            Product produitInDb2 = new Product()
             {
                 NomProduit = "Table",
                 DescriptionProduit = "Une superbe table",
@@ -75,17 +75,17 @@ namespace R5A08_TP1.Controllers.Tests
                 UriPhotoProduit = "https://ikea.fr/table.jpg"
             };
 
-            context.Produits.Add(produitInDb1);
-            context.Produits.Add(produitInDb2);
+            context.Products.Add(produitInDb1);
+            context.Products.Add(produitInDb2);
             context.SaveChanges();
 
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
-            ActionResult<IEnumerable<Produit>> action = controller.GetProduits().Result;
+            ActionResult<IEnumerable<Product>> action = controller.GetProduits().Result;
 
             // Then : On récupère le produit et le code de retour est 200.
             Assert.IsNotNull(action);
-            Assert.IsInstanceOfType(action.Value, typeof(IEnumerable<Produit>));
-            List<Produit> returnProducts = action.Value.ToList();
+            Assert.IsInstanceOfType(action.Value, typeof(IEnumerable<Product>));
+            List<Product> returnProducts = action.Value.ToList();
             Assert.AreEqual(2, returnProducts.Count);
             Assert.AreEqual(produitInDb1.NomProduit, returnProducts[0].NomProduit);
             Assert.AreEqual(produitInDb2.NomProduit, returnProducts[1].NomProduit);
@@ -95,7 +95,7 @@ namespace R5A08_TP1.Controllers.Tests
         public void GetProductShouldReturnNotFound()
         {
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
-            ActionResult<Produit> action = controller.GetProduitById(0).Result;
+            ActionResult<Product> action = controller.GetProduitById(0).Result;
 
             // Then : On récupère le produit et le code de retour est 404.
             Assert.IsNull(action.Value);
@@ -106,7 +106,7 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldCreateProduct()
         {
             // Given : Un produit en base de données.
-            Produit produitInDb = new Produit()
+            Product produitInDb = new Product()
             {
                 NomProduit = "Chaise",
                 DescriptionProduit = "Une superbe chaise",
@@ -115,11 +115,11 @@ namespace R5A08_TP1.Controllers.Tests
             };
 
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
-            ActionResult<Produit> action = controller.PostProduit(produitInDb).Result;
+            ActionResult<Product> action = controller.PostProduit(produitInDb).Result;
 
             // Then : On récupère le produit et le code de retour est 200.
-            Produit productToGet = context.Produits.Where(p => p.IdProduit == produitInDb.IdProduit).FirstOrDefault();
-            Assert.IsInstanceOfType(action, typeof(ActionResult<Produit>), "Result n'est pas un action result.");
+            Product productToGet = context.Products.Where(p => p.IdProduit == produitInDb.IdProduit).FirstOrDefault();
+            Assert.IsInstanceOfType(action, typeof(ActionResult<Product>), "Result n'est pas un action result.");
             Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult), "Result n'est pas un CreatedAtActionResult.");
             Assert.AreEqual(produitInDb, productToGet, "Les produits ne sont pas identiques.");
         }
@@ -128,20 +128,20 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldDeleteProduct() 
         { 
             // Given : Un produit en base de données.
-            Produit produitInDb = new Produit()
+            Product produitInDb = new Product()
             {
                 NomProduit = "Chaise",
                 DescriptionProduit = "Une superbe chaise",
                 NomPhotoProduit = "Une superbe chaise bleu",
                 UriPhotoProduit = "https://ikea.fr/chaise.jpg"
             };
-            context.Produits.Add(produitInDb);
+            context.Products.Add(produitInDb);
             context.SaveChanges();
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
             IActionResult action = controller.DeleteProduit(produitInDb.IdProduit).Result;
             // Then : On récupère le produit et le code de retour est 200.
             Assert.IsInstanceOfType(action, typeof(NoContentResult), "Result n'est pas un OkObjectResult.");
-            Produit productToGet = context.Produits.Where(p => p.IdProduit == produitInDb.IdProduit).FirstOrDefault();
+            Product productToGet = context.Products.Where(p => p.IdProduit == produitInDb.IdProduit).FirstOrDefault();
             Assert.IsNull(productToGet, "Le produit n'a pas été supprimé.");
         }
 
@@ -158,16 +158,16 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldUpdateProduct()
         {
             // Given : Un produit en base de données.
-            Produit produitInDb = new Produit()
+            Product produitInDb = new Product()
             {
                 NomProduit = "Chaise",
                 DescriptionProduit = "Une superbe chaise",
                 NomPhotoProduit = "Une superbe chaise bleu",
                 UriPhotoProduit = "https://ikea.fr/chaise.jpg"
             };
-            context.Produits.Add(produitInDb);
+            context.Products.Add(produitInDb);
             context.SaveChanges();
-            Produit produitToUpdate = new Produit()
+            Product produitToUpdate = new Product()
             {
                 IdProduit = produitInDb.IdProduit,
                 NomProduit = "Chaise Modifiée",
@@ -179,7 +179,7 @@ namespace R5A08_TP1.Controllers.Tests
             IActionResult action = controller.PutProduit(produitInDb.IdProduit, produitToUpdate).Result;
             // Then : On récupère le produit et le code de retour est 200.
             Assert.IsInstanceOfType(action, typeof(NoContentResult), "Result n'est pas un NoContentResult.");
-            Produit productToGet = context.Produits.Where(p => p.IdProduit == produitInDb.IdProduit).FirstOrDefault();
+            Product productToGet = context.Products.Where(p => p.IdProduit == produitInDb.IdProduit).FirstOrDefault();
             Assert.AreEqual(produitToUpdate.NomProduit, productToGet.NomProduit, "Le nom du produit n'a pas été modifié.");
             Assert.AreEqual(produitToUpdate.DescriptionProduit, productToGet.DescriptionProduit, "La description du produit n'a pas été modifiée.");
             Assert.AreEqual(produitToUpdate.NomPhotoProduit, productToGet.NomPhotoProduit, "Le nom de la photo du produit n'a pas été modifié.");
@@ -190,7 +190,7 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldNotUpdateProductBecauseProductDoesNotExist()
         {
             // Given : Un produit en base de données.
-            Produit produitToUpdate = new Produit()
+            Product produitToUpdate = new Product()
             {
                 IdProduit = 0,
                 NomProduit = "Chaise Modifiée",
@@ -207,7 +207,7 @@ namespace R5A08_TP1.Controllers.Tests
         [TestCleanup]
         public void Cleanup()
         {
-            context.Produits.RemoveRange(context.Produits);
+            context.Products.RemoveRange(context.Products);
             context.SaveChanges();
         }
     }

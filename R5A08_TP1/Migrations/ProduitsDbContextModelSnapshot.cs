@@ -10,7 +10,7 @@ using R5A08_TP1.Models.EntityFramework;
 
 namespace R5A08_TP1.Migrations
 {
-    [DbContext(typeof(ProduitsDbContext))]
+    [DbContext(typeof(AppDbContext))]
     partial class ProduitsDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

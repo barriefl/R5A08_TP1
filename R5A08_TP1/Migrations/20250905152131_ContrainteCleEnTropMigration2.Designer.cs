@@ -11,7 +11,7 @@ using R5A08_TP1.Models.EntityFramework;
 
 namespace R5A08_TP1.Migrations
 {
-    [DbContext(typeof(ProduitsDbContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20250905152131_ContrainteCleEnTropMigration2")]
     partial class ContrainteCleEnTropMigration2
     {

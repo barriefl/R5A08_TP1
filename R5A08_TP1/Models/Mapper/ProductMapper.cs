@@ -3,20 +3,20 @@ using R5A08_TP1.Models.EntityFramework;
 
 namespace R5A08_TP1.Models.Mapper
 {
-    public class ProductMapper : IMapper<Produit, ProductDto>
+    public class ProductMapper : IMapper<Product, ProductDto>
     {
-        public Produit? FromDTO(ProductDto dto)
+        public Product? FromDTO(ProductDto dto)
         {
-            return new Produit
+            return new Product
             {
                 IdProduit = dto.Id,
                 NomProduit = dto.Nom,
-                TypeProduitNavigation = new TypeProduit { NomTypeProduit = dto.Type },
-                MarqueNavigation = new Marque { NomMarque = dto.Marque }
+                TypeProduitNavigation = new ProductType { NomTypeProduit = dto.Type },
+                MarqueNavigation = new Brand { NomMarque = dto.Marque }
                 };
         }
 
-        public ProductDto? FromEntity(Produit entity)
+        public ProductDto? FromEntity(Product entity)
         {
             return new ProductDto
             {

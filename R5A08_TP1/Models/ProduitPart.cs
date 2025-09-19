@@ -1,14 +1,14 @@
 ﻿namespace R5A08_TP1.Models.EntityFramework
 {
-    public partial class Produit
+    public partial class Product
     {
-        public Produit()
+        public Product()
         {
         }
 
         public override bool Equals(object? obj)
         {
-            return obj is Produit produit &&
+            return obj is Product produit &&
                    IdProduit == produit.IdProduit &&
                    IdMarque == produit.IdMarque &&
                    IdTypeProduit == produit.IdTypeProduit &&
@@ -19,8 +19,8 @@
                    StockReelProduit == produit.StockReelProduit &&
                    StockMinProduit == produit.StockMinProduit &&
                    StockMaxProduit == produit.StockMaxProduit &&
-                   EqualityComparer<TypeProduit?>.Default.Equals(TypeProduitNavigation, produit.TypeProduitNavigation) &&
-                   EqualityComparer<Marque?>.Default.Equals(MarqueNavigation, produit.MarqueNavigation);
+                   EqualityComparer<ProductType?>.Default.Equals(TypeProduitNavigation, produit.TypeProduitNavigation) &&
+                   EqualityComparer<Brand?>.Default.Equals(MarqueNavigation, produit.MarqueNavigation);
         }
 
         public override int GetHashCode()

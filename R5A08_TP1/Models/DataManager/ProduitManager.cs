@@ -5,41 +5,41 @@ using R5A08_TP1.Models.Repository;
 
 namespace R5A08_TP1.Models.DataManager
 {
-    public class ProduitManager : IDataRepository<Produit>
+    public class ProduitManager : IDataRepository<Product>
     {
-        readonly ProduitsDbContext? produitsDbContext;
+        readonly AppDbContext? produitsDbContext;
 
         public ProduitManager() { }
 
-        public ProduitManager(ProduitsDbContext context)
+        public ProduitManager(AppDbContext context)
         {
             produitsDbContext = context;
         }
 
-        public async Task<ActionResult<IEnumerable<Produit>>> GetAllAsync()
+        public async Task<ActionResult<IEnumerable<Product>>> GetAllAsync()
         {
-            return await produitsDbContext.Produits.ToListAsync();
+            return await produitsDbContext.Products.ToListAsync();
         }
 
-        public async Task<ActionResult<Produit>> GetByIdAsync(int id)
+        public async Task<ActionResult<Product>> GetByIdAsync(int id)
         {
-            return await produitsDbContext.Produits.FirstOrDefaultAsync(p => p.IdProduit == id);
+            return await produitsDbContext.Products.FirstOrDefaultAsync(p => p.IdProduit == id);
         }
     
-        public async Task AddAsync(Produit entity)
+        public async Task AddAsync(Product entity)
         {
-            await produitsDbContext.Produits.AddAsync(entity);
+            await produitsDbContext.Products.AddAsync(entity);
             await produitsDbContext.SaveChangesAsync();
         }
-        public async Task UpdateAsync(Produit produit, Produit entity)
+        public async Task UpdateAsync(Product produit, Product entity)
         {
-            produitsDbContext.Produits.Attach(produit);
+            produitsDbContext.Products.Attach(produit);
             produitsDbContext.Entry(produit).CurrentValues.SetValues(entity);
             await produitsDbContext.SaveChangesAsync();
         }
-        public async Task DeleteAsync(Produit produit)
+        public async Task DeleteAsync(Product produit)
         {
-            produitsDbContext.Produits.Remove(produit);
+            produitsDbContext.Products.Remove(produit);
             await produitsDbContext.SaveChangesAsync();
         }
     }

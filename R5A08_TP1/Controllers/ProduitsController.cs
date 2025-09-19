@@ -14,16 +14,16 @@ namespace R5A08_TP1.Controllers
     [ApiController]
     public class ProduitsController : Controller
     {
-        private readonly IDataRepository<Produit> dataRepository;
+        private readonly IDataRepository<Product> dataRepository;
 
-        public ProduitsController(IDataRepository<Produit> dataRepo)
+        public ProduitsController(IDataRepository<Product> dataRepo)
         {
             dataRepository = dataRepo;
         }
 
         // GET: Produits
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Produit>>> GetProduits()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProduits()
         {
             return await dataRepository.GetAllAsync();
         }
@@ -34,7 +34,7 @@ namespace R5A08_TP1.Controllers
         [ActionName("GetById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Produit>> GetProduitById(int id)
+        public async Task<ActionResult<Product>> GetProduitById(int id)
         {
             var product = await dataRepository.GetByIdAsync(id);
             if (product.Value == null)
@@ -49,7 +49,7 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PutProduit(int id, Produit product)
+        public async Task<IActionResult> PutProduit(int id, Product product)
         {
             if (id != product.IdProduit)
             {
@@ -68,7 +68,7 @@ namespace R5A08_TP1.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Produit>> PostProduit(Produit product)
+        public async Task<ActionResult<Product>> PostProduit(Product product)
         {
             if (!ModelState.IsValid)
             {
