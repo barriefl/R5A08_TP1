@@ -14,21 +14,22 @@ namespace R5A08_TP1.Controllers
     [ApiController]
     public class ProductController : Controller
     {
-        private readonly IWriteDataRepository<Product> dataRepository;
+        private readonly IProductRepository productRepository;
 
-        public ProductController(IWriteDataRepository<Product> dataRepo)
+        public ProductController(IProductRepository productRepo)
         {
-            dataRepository = dataRepo;
+            productRepository = productRepo;
         }
 
-        // GET: Produits
+        // GET: Products
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            return await dataRepository.GetAllAsync();
+            return await productRepository.GetAllAsync();
         }
 
-        // GET: Produits/GetById/5
+        // GET: Products/GetById/5
         [HttpGet]
         [Route("[action]/{id}")]
         [ActionName("GetById")]
@@ -36,7 +37,7 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Product>> GetProductById(int id)
         {
-            var product = await dataRepository.GetByIdAsync(id);
+            var product = await productRepository.GetByIdAsync(id);
 
             if (product.Value == null)
             {
@@ -46,7 +47,16 @@ namespace R5A08_TP1.Controllers
             return product;
         }
 
-        // PUT: Produits/Put/5
+        [HttpGet]
+        [Route("[action]/{name}")]
+        [ActionName("GetByName")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductsByName(string name)
+        {
+            return await productRepository.GetProductsByNameAsync(name);
+        }
+
+        // PUT: Products/Put/5
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -58,18 +68,18 @@ namespace R5A08_TP1.Controllers
                 return BadRequest();
             }
 
-            var productToUpdate = await dataRepository.GetByIdAsync(id);
+            var productToUpdate = await productRepository.GetByIdAsync(id);
 
             if (productToUpdate.Value == null)
             {
                 return NotFound();
             }
 
-            await dataRepository.UpdateAsync(productToUpdate.Value, product);
+            await productRepository.UpdateAsync(productToUpdate.Value, product);
             return NoContent();
         }
 
-        // POST: Produits/Post
+        // POST: Products/Post
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -80,24 +90,24 @@ namespace R5A08_TP1.Controllers
                 return BadRequest(ModelState);
             }
 
-            await dataRepository.AddAsync(product);
+            await productRepository.AddAsync(product);
             return CreatedAtAction("GetById", new { id = product.IdProduct }, product);
         }
 
-        // DELETE: Produits/Delete/5
+        // DELETE: Products/Delete/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            var product = await dataRepository.GetByIdAsync(id);
+            var product = await productRepository.GetByIdAsync(id);
 
             if (product.Value == null)
             {
                 return NotFound();
             }
 
-            await dataRepository.DeleteAsync(product.Value);
+            await productRepository.DeleteAsync(product.Value);
             return NoContent();
         }
     }

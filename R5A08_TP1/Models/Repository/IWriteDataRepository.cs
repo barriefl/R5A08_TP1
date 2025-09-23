@@ -2,7 +2,7 @@
 
 namespace R5A08_TP1.Models.Repository
 {
-    public interface IWriteDataRepository<TEntity>
+    public interface IWriteDataRepository<TEntity> : IGetDataRepository<TEntity>
     {
         Task AddAsync(TEntity entity);
         Task UpdateAsync(TEntity entityToUpdate, TEntity entity);
