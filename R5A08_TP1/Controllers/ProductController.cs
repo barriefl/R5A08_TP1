@@ -12,18 +12,18 @@ namespace R5A08_TP1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProduitsController : Controller
+    public class ProductController : Controller
     {
         private readonly IDataRepository<Product> dataRepository;
 
-        public ProduitsController(IDataRepository<Product> dataRepo)
+        public ProductController(IDataRepository<Product> dataRepo)
         {
             dataRepository = dataRepo;
         }
 
         // GET: Produits
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProduits()
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             return await dataRepository.GetAllAsync();
         }
@@ -34,13 +34,15 @@ namespace R5A08_TP1.Controllers
         [ActionName("GetById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Product>> GetProduitById(int id)
+        public async Task<ActionResult<Product>> GetProductById(int id)
         {
             var product = await dataRepository.GetByIdAsync(id);
+
             if (product.Value == null)
             {
                 return NotFound();
             }
+
             return product;
         }
 
@@ -49,17 +51,20 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PutProduit(int id, Product product)
+        public async Task<IActionResult> PutProduct(int id, Product product)
         {
-            if (id != product.IdProduit)
+            if (id != product.IdProduct)
             {
                 return BadRequest();
             }
+
             var productToUpdate = await dataRepository.GetByIdAsync(id);
+
             if (productToUpdate.Value == null)
             {
                 return NotFound();
             }
+
             await dataRepository.UpdateAsync(productToUpdate.Value, product);
             return NoContent();
         }
@@ -68,27 +73,30 @@ namespace R5A08_TP1.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<Product>> PostProduit(Product product)
+        public async Task<ActionResult<Product>> PostProduct(Product product)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
             await dataRepository.AddAsync(product);
-            return CreatedAtAction("GetById", new { id = product.IdProduit }, product);
+            return CreatedAtAction("GetById", new { id = product.IdProduct }, product);
         }
 
         // DELETE: Produits/Delete/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteProduit(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
             var product = await dataRepository.GetByIdAsync(id);
+
             if (product.Value == null)
             {
                 return NotFound();
             }
+
             await dataRepository.DeleteAsync(product.Value);
             return NoContent();
         }

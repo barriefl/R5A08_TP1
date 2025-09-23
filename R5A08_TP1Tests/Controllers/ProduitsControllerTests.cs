@@ -17,7 +17,7 @@ namespace R5A08_TP1.Controllers.Tests
     public class ProduitsControllerTests
     {
         private AppDbContext context;
-        private ProduitsController controller;
+        private ProductController controller;
         private IDataRepository<Product> dataRepository;
 
         [TestInitialize]
@@ -25,8 +25,8 @@ namespace R5A08_TP1.Controllers.Tests
         {
             var builder = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql();
             context = new AppDbContext();
-            dataRepository = new ProduitManager(context);
-            controller = new ProduitsController(dataRepository);
+            dataRepository = new ProductManager(context);
+            controller = new ProductController(dataRepository);
         }
 
         [TestMethod()]
@@ -80,7 +80,7 @@ namespace R5A08_TP1.Controllers.Tests
             context.SaveChanges();
 
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
-            ActionResult<IEnumerable<Product>> action = controller.GetProduits().Result;
+            ActionResult<IEnumerable<Product>> action = controller.GetProducts().Result;
 
             // Then : On récupère le produit et le code de retour est 200.
             Assert.IsNotNull(action);
@@ -95,7 +95,7 @@ namespace R5A08_TP1.Controllers.Tests
         public void GetProductShouldReturnNotFound()
         {
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
-            ActionResult<Product> action = controller.GetProduitById(0).Result;
+            ActionResult<Product> action = controller.GetProductById(0).Result;
 
             // Then : On récupère le produit et le code de retour est 404.
             Assert.IsNull(action.Value);
@@ -115,7 +115,7 @@ namespace R5A08_TP1.Controllers.Tests
             };
 
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
-            ActionResult<Product> action = controller.PostProduit(produitInDb).Result;
+            ActionResult<Product> action = controller.PostProduct(produitInDb).Result;
 
             // Then : On récupère le produit et le code de retour est 200.
             Product productToGet = context.Products.Where(p => p.IdProduit == produitInDb.IdProduit).FirstOrDefault();
@@ -149,7 +149,7 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldNotDeleteProductBecauseProductDoesNotExist()
         {
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
-            IActionResult action = controller.DeleteProduit(0).Result;
+            IActionResult action = controller.DeleteProduct(0).Result;
             // Then : On récupère le produit et le code de retour est 404.
             Assert.IsInstanceOfType(action, typeof(NotFoundResult), "Result n'est pas un NotFoundResult.");
         }   

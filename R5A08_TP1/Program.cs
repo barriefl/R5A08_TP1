@@ -6,7 +6,7 @@ using R5A08_TP1.Models.Repository;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<IDataRepository<Product>, ProduitManager>();
+builder.Services.AddScoped<IDataRepository<Product>, ProductManager>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("ProduitsDbContext")));

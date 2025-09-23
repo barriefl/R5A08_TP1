@@ -18,14 +18,14 @@ namespace R5A08_TP1.Controllers.Tests
     [TestCategory("Mock")]
     public class ProduitsControllerMockTests
     {
-        private ProduitsController controllerMock;
+        private ProductController controllerMock;
         private Mock<IDataRepository<Product>> dataRepositoryMock;
 
         [TestInitialize]
         public void TestInitialize()
         {
             var builder = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql();
-            controllerMock = new ProduitsController(dataRepositoryMock.Object);
+            controllerMock = new ProductController(dataRepositoryMock.Object);
             dataRepositoryMock = new Mock<IDataRepository<Product>>();
         }
 
