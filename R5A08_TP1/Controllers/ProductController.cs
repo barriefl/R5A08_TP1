@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using R5A08_TP1.Models.EntityFramework;
@@ -15,10 +16,12 @@ namespace R5A08_TP1.Controllers
     public class ProductController : Controller
     {
         private readonly IProductRepository productRepository;
+        private readonly IMapper _mapper;
 
-        public ProductController(IProductRepository productRepo)
+        public ProductController(IProductRepository productRepo, IMapper mapper)
         {
             productRepository = productRepo;
+            _mapper = mapper;
         }
 
         // GET: Products
@@ -26,7 +29,8 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            return await productRepository.GetAllAsync();
+            ActionResult<IEnumerable<Product>> products = await productRepository.GetAllAsync();
+            return _mapper.Map<Product>(products);
         }
 
         // GET: Products/GetById/5
