@@ -18,14 +18,14 @@ namespace R5A08_TP1.Controllers.Tests
     {
         private AppDbContext context;
         private ProductController controller;
-        private IDataRepository<Product> dataRepository;
+        private IWriteDataRepository<Product> dataRepository;
 
         [TestInitialize]
         public void TestInitialize()
         {
             var builder = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql();
             context = new AppDbContext();
-            dataRepository = new ProductManager(context);
+            dataRepository = new GetDataManager(context);
             controller = new ProductController(dataRepository);
         }
 

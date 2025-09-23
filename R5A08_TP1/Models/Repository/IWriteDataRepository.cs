@@ -2,10 +2,8 @@
 
 namespace R5A08_TP1.Models.Repository
 {
-    public interface IDataRepository<TEntity>
+    public interface IWriteDataRepository<TEntity>
     {
-        Task<ActionResult<IEnumerable<TEntity>>> GetAllAsync();
-        Task<ActionResult<TEntity>> GetByIdAsync(int id);
         Task AddAsync(TEntity entity);
         Task UpdateAsync(TEntity entityToUpdate, TEntity entity);
         Task DeleteAsync(TEntity entity);

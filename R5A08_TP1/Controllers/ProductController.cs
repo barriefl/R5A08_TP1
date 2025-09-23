@@ -14,9 +14,9 @@ namespace R5A08_TP1.Controllers
     [ApiController]
     public class ProductController : Controller
     {
-        private readonly IDataRepository<Product> dataRepository;
+        private readonly IWriteDataRepository<Product> dataRepository;
 
-        public ProductController(IDataRepository<Product> dataRepo)
+        public ProductController(IWriteDataRepository<Product> dataRepo)
         {
             dataRepository = dataRepo;
         }
