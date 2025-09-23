@@ -7,7 +7,7 @@ namespace R5A08_TP1.Models.DataManager
 {
     public class GetDataManager<TEntity> : IGetDataRepository<TEntity> where TEntity : class
     {
-        readonly AppDbContext? appDbContext;
+        private readonly AppDbContext? appDbContext;
         private DbSet<TEntity> dbSet;
 
         public GetDataManager(AppDbContext context)

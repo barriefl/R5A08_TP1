@@ -18,7 +18,7 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Brand> Brands { get; set; }
     public virtual DbSet<Product> Products { get; set; }
-    public virtual DbSet<ProductType> ProductsTypes { get; set; }
+    public virtual DbSet<ProductType> ProductTypes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Server=localhost;port=5432;Database=ProduitsDB;uid=postgres;password=postgres;");

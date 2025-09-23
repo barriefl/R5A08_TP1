@@ -4,12 +4,12 @@ using R5A08_TP1.Models.Repository;
 
 namespace R5A08_TP1.Models.DataManager
 {
-    public class WriteDataManager<TEntity> : IWriteDataRepository<TEntity> where TEntity : class
+    public class WriteDataManager<TEntity> : GetDataManager<TEntity>, IWriteDataRepository<TEntity> where TEntity : class
     {
-        readonly AppDbContext? appDbContext;
+        private readonly AppDbContext? appDbContext;
         private DbSet<TEntity> dbSet;
 
-        public WriteDataManager(AppDbContext context)
+        public WriteDataManager(AppDbContext context) : base(context)
         {
             appDbContext = context;
             dbSet = appDbContext.Set<TEntity>();
