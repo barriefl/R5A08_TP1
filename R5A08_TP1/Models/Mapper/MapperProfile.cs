@@ -9,8 +9,24 @@ namespace R5A08_TP1.Models.Mapper
         public MapperProfile()
         {
             // Source -> Target
-            CreateMap<ProductDTO, Product>();
-            CreateMap<ProductDetailsDTO, Product>();
+
+            // GET.
+            CreateMap<Product, ProductDTO>();
+            CreateMap<Product, ProductDetailsDTO>();
+
+            // POST.
+            CreateMap<CreateProductDTO, Product>()
+                .ForMember(dest => dest.BrandNavigation, opt => opt.Ignore())
+                .ForMember(dest => dest.ProductTypeNavigation, opt => opt.Ignore())
+                .ForMember(dest => dest.IdBrand, opt => opt.Ignore())
+                .ForMember(dest => dest.IdProductType, opt => opt.Ignore());
+
+            // PUT.
+            CreateMap<UpdateProductDTO, Product>()
+                .ForMember(dest => dest.IdBrand, opt => opt.Ignore())
+                .ForMember(dest => dest.IdProductType, opt => opt.Ignore())
+                .ForMember(dest => dest.BrandNavigation, opt => opt.Ignore())
+                .ForMember(dest => dest.ProductTypeNavigation, opt => opt.Ignore());
         }
     }
 }

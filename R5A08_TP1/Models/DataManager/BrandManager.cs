@@ -16,9 +16,9 @@ namespace R5A08_TP1.Models.DataManager
             brands = appDbContext.Brands;
         }
 
-        public async Task<ActionResult<IEnumerable<Brand>>> GetBrandsByNameAsync(string name)
+        public async Task<ActionResult<Brand>> GetBrandByNameAsync(string name)
         {
-            return await brands.Where(b => b.NameBrand.ToUpper() == name.ToUpper()).ToListAsync();
+            return await brands.FirstOrDefaultAsync(b => b.NameBrand.ToUpper() == name.ToUpper());
         }
     }
 }

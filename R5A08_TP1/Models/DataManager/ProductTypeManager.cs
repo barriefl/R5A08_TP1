@@ -16,9 +16,9 @@ namespace R5A08_TP1.Models.DataManager
             productTypes = appDbContext.ProductTypes;
         }
 
-        public async Task<ActionResult<IEnumerable<ProductType>>> GetProductTypesByNameAsync(string name)
+        public async Task<ActionResult<ProductType>> GetProductTypeByNameAsync(string name)
         {
-            return await productTypes.Where(p => p.NameProductType.ToUpper() == name.ToUpper()).ToListAsync();
+            return await productTypes.FirstOrDefaultAsync(p => p.NameProductType.ToUpper() == name.ToUpper());
         }
     }
 }
