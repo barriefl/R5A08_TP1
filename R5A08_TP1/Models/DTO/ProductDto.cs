@@ -2,9 +2,9 @@
 {
     public class ProductDTO
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Type { get; set; }
-        public string? Brand { get; set; }
+        public int IdProduct { get; set; }
+        public string? NameProduct { get; set; }
+        public string? NameProductType { get; set; }
+        public string? NameBrand { get; set; }
     }
 }

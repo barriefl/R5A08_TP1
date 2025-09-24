@@ -2,9 +2,14 @@
 {
     public class UpdateProductDTO
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string BrandName { get; set; }
-        public string ProductTypeName { get; set; }
+        public int IdProduct { get; set; }
+        public string NameProduct { get; set; }
+        public string NameBrand { get; set; }
+        public string NameProductType { get; set; }
+        public string PhotoNameProduct { get; set; }
+        public string UriPhotoProduct { get; set; }
+        public string RealStock { get; set; }
+        public string MinStock { get; set; }
+        public string MaxStock { get; set; }
     }
 }

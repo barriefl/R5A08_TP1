@@ -2,14 +2,14 @@
 {
     public class ProductDetailsDTO
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Type { get; set; }
-        public string? Brand { get; set; }
-        public string? Description { get; set; }
-        public string? PhotoName { get; set; }
-        public string? UriPhoto { get; set; }
-        public int? Stock { get; set; }
+        public int IdProduct { get; set; }
+        public string? NameProduct { get; set; }
+        public string? NameProductType { get; set; }
+        public string? NameBrand { get; set; }
+        public string? DescriptionProduct { get; set; }
+        public string? PhotoNameProduct { get; set; }
+        public string? UriPhotoProduct { get; set; }
+        public int? RealStock { get; set; }
         public bool Restocking { get; set; }
     }
 }

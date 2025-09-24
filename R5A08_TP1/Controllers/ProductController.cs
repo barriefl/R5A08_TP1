@@ -34,7 +34,8 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts()
         {
-            ActionResult<IEnumerable<Product>> products = await productRepository.GetAllAsync();
+            ActionResult<IEnumerable<Product>> productsResult = await productRepository.GetAllWithIncludesAsync();
+            IEnumerable<Product> products = productsResult.Value;
 
             IEnumerable<ProductDTO> productsDto = _mapper.Map<IEnumerable<ProductDTO>>(products);
             return Ok(productsDto);
@@ -48,15 +49,16 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductDetailsDTO>> GetProductById(int id)
         {
-            ActionResult<Product> product = await productRepository.GetByIdAsync(id);
+            ActionResult<Product> productResult = await productRepository.GetByIdWithIncludesAsync(id);
+            Product product = productResult.Value;
 
-            if (product.Value == null)
+            if (product == null)
             {
                 return NotFound();
             }
 
             ProductDetailsDTO productDetailsDto = _mapper.Map<ProductDetailsDTO>(product);
-            return Ok(product);
+            return Ok(productDetailsDto);
         }
 
         [HttpGet]
@@ -65,7 +67,8 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProductsByName(string name)
         {
-            ActionResult<IEnumerable<Product>> products = await productRepository.GetProductsByNameAsync(name);
+            ActionResult<IEnumerable<Product>> productsResult = await productRepository.GetProductsByNameAsync(name);
+            IEnumerable<Product> products = productsResult.Value;
 
             IEnumerable<ProductDTO> productsDto = _mapper.Map<IEnumerable<ProductDTO>>(products);
             return Ok(productsDto);
@@ -78,9 +81,14 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutProduct(int id, UpdateProductDTO productDto)
         {
-            if (id != productDto.Id)
+            if (id != productDto.IdProduct)
             {
                 return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
             }
 
             ActionResult<Product> productToUpdate = await productRepository.GetByIdAsync(id);
@@ -89,19 +97,19 @@ namespace R5A08_TP1.Controllers
                 return NotFound();
             }
 
-            ActionResult<Brand> brandResult = await brandRepository.GetBrandByNameAsync(productDto.BrandName);
+            ActionResult<Brand> brandResult = await brandRepository.GetBrandByNameAsync(productDto.NameBrand);
             Brand brand = brandResult.Value;
             if (brand == null)
             {
-                brand = new Brand { NameBrand = productDto.BrandName };
+                brand = new Brand { NameBrand = productDto.NameBrand };
                 await brandRepository.AddAsync(brand);
             }
 
-            ActionResult<ProductType> productTypeResult = await productTypeRepository.GetProductTypeByNameAsync(productDto.ProductTypeName);
+            ActionResult<ProductType> productTypeResult = await productTypeRepository.GetProductTypeByNameAsync(productDto.NameProductType);
             ProductType productType = productTypeResult.Value;
             if (productType == null)
             {
-                productType = new ProductType { NameProductType = productDto.ProductTypeName };
+                productType = new ProductType { NameProductType = productDto.NameProductType };
                 await productTypeRepository.AddAsync(productType);
             }
 
@@ -125,19 +133,19 @@ namespace R5A08_TP1.Controllers
                 return BadRequest(ModelState);
             }
 
-            ActionResult<Brand> brandResult = await brandRepository.GetBrandByNameAsync(productDto.BrandName);
+            ActionResult<Brand> brandResult = await brandRepository.GetBrandByNameAsync(productDto.NameBrand);
             Brand brand = brandResult.Value;
             if (brand == null)
             {
-                brand = new Brand { NameBrand = productDto.BrandName };
+                brand = new Brand { NameBrand = productDto.NameBrand };
                 await brandRepository.AddAsync(brand);
             }
 
-            ActionResult<ProductType> productTypeResult = await productTypeRepository.GetProductTypeByNameAsync(productDto.ProductTypeName);
+            ActionResult<ProductType> productTypeResult = await productTypeRepository.GetProductTypeByNameAsync(productDto.NameProductType);
             ProductType productType = productTypeResult.Value;
             if (productType == null)
             {
-                productType = new ProductType { NameProductType = productDto.ProductTypeName };
+                productType = new ProductType { NameProductType = productDto.NameProductType };
                 await productTypeRepository.AddAsync(productType);
             }
 
