@@ -1,0 +1,15 @@
+﻿@inherits LayoutComponentBase
+
+<BlazorBootstrapLayout StickyHeader="true">
+    <HeaderSection>
+        <ThemeSwitcher Class="ps-3 ps-lg-2" />
+    </HeaderSection>
+
+    <SidebarSection>
+        <NavMenu />
+    </SidebarSection>
+
+    <ContentSection>
+        @Body
+    </ContentSection>
+</BlazorBootstrapLayout>

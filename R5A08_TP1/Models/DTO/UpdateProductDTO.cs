@@ -8,8 +8,8 @@
         public string NameProductType { get; set; }
         public string PhotoNameProduct { get; set; }
         public string UriPhotoProduct { get; set; }
-        public string RealStock { get; set; }
-        public string MinStock { get; set; }
-        public string MaxStock { get; set; }
+        public int RealStock { get; set; }
+        public int MinStock { get; set; }
+        public int MaxStock { get; set; }
     }
 }

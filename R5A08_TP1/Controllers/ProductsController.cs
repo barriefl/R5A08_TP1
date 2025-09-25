@@ -14,14 +14,14 @@ namespace R5A08_TP1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : Controller
+    public class ProductsController : Controller
     {
         private readonly IProductRepository productRepository;
         private readonly IBrandRepository brandRepository;
         private readonly IProductTypeRepository productTypeRepository;
         private readonly IMapper _mapper;
 
-        public ProductController(IProductRepository productRepo, IMapper mapper, IBrandRepository brandRepo, IProductTypeRepository productTypeRepo)
+        public ProductsController(IProductRepository productRepo, IMapper mapper, IBrandRepository brandRepo, IProductTypeRepository productTypeRepo)
         {
             productRepository = productRepo;
             _mapper = mapper;

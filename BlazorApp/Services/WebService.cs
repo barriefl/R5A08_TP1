@@ -7,7 +7,7 @@ namespace BlazorApp.Services
     {
         private readonly HttpClient httpClient = new()
         {
-            BaseAddress = new Uri("http://localhost:5011/api/")
+            BaseAddress = new Uri("http://localhost:5196/api/")
         };
 
         public async Task AddAsync(Product product)
@@ -40,7 +40,7 @@ namespace BlazorApp.Services
 
         public async Task UpdateAsync(Product updatedEntity)
         {
-            await httpClient.PutAsJsonAsync<Product>($"products/{updatedEntity.IdProduit}", updatedEntity);
+            await httpClient.PutAsJsonAsync<Product>($"products/{updatedEntity.IdProduct}", updatedEntity);
         }
     }
 }

@@ -5,39 +5,15 @@ namespace BlazorApp.Models
 {
     public class Product
     {
-        public int IdProduit { get; set; }
-
-        //[Column("marq_id")]
-        //[ForeignKey(nameof(Marque.ProduitsAssociesMarques))]
-        //public int? IdMarque { get; set; }
-
-        //[Column("typr_id")]
-        //[ForeignKey(nameof(TypeProduit.ProduitsAssociesTypesProduit))]
-        //public int? IdTypeProduit { get; set; }
-
-        public string NomProduit { get; set; } = null!;
-
-        public string DescriptionProduit { get; set; } = null!;
-
-        public string NomPhotoProduit { get; set; } = null!;
-
-        public string UriPhotoProduit { get; set; } = null!;
-
-        //[Column("prod_stockreel")]
-        //public int StockReelProduit { get; set; }
-
-        //[Column("prod_stockmin")]
-        //public int StockMinProduit { get; set; }
-
-        //[Column("prod_stockmax")]
-        //public int StockMaxProduit { get; set; }
-
-        //[ForeignKey(nameof(TypeProduit.IdTypeProduit))]
-        //[InverseProperty(nameof(TypeProduit.ProduitsAssociesTypesProduit))]
-        //public virtual TypeProduit? TypeProduitNavigation { get; set; } = null!;
-
-        //[ForeignKey(nameof(Marque.IdMarque))]
-        //[InverseProperty(nameof(Marque.ProduitsAssociesMarques))]
-        //public virtual Marque? MarqueNavigation { get; set; } = null!;
+        public int IdProduct { get; set; }
+        public string NameProduct { get; set; }
+        public string NameBrand { get; set; }
+        public string NameProductType { get; set; }
+        public string DescriptionProduct { get; set; }
+        public string PhotoNameProduct { get; set; }
+        public string UriPhotoProduct { get; set; }
+        public int RealStock { get; set; }
+        public int MinStock { get; set; }
+        public int MaxStock { get; set; }
     }
 }

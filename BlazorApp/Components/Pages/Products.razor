@@ -1,0 +1,41 @@
+﻿@page "/products"
+@using BlazorApp.ViewModels
+@inject ProductViewModel ViewModel
+
+<PageTitle>Products</PageTitle>
+
+<h1>Products</h1>
+
+@if (ViewModel.IsLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Product type</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in ViewModel.Products)
+            {
+                <tr>
+                    <td>@product.NameProduct</td>
+                    <td>@product.NameBrand</td>
+                    <td>@product.NameProductType</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await ViewModel.LoadDataAsync();
+    }
+}

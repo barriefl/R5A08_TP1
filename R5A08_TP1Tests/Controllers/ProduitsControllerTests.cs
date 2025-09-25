@@ -17,7 +17,7 @@ namespace R5A08_TP1.Controllers.Tests
     public class ProduitsControllerTests
     {
         private AppDbContext context;
-        private ProductController controller;
+        private ProductsController controller;
         private IWriteDataRepository<Product> dataRepository;
 
         [TestInitialize]
@@ -26,7 +26,7 @@ namespace R5A08_TP1.Controllers.Tests
             var builder = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql();
             context = new AppDbContext();
             dataRepository = new GetDataManager(context);
-            controller = new ProductController(dataRepository);
+            controller = new ProductsController(dataRepository);
         }
 
         [TestMethod()]

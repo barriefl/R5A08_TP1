@@ -1,5 +1,7 @@
+using BlazorApp.Components;
 using BlazorApp.Models;
 using BlazorApp.Services;
+using BlazorApp.ViewModels;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -14,6 +16,12 @@ namespace BlazorApp
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped<IService<Product>, WebService>(_ => new WebService());
+            builder.Services.AddScoped<ProductViewModel>();
+            builder.Services.AddScoped<CreateProductViewModel>();
+
+            var app = builder.Build();
+
+            builder.Services.AddBlazorBootstrap();
 
             await builder.Build().RunAsync();
         }

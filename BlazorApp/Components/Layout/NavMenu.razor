@@ -1,0 +1,28 @@
+﻿<Sidebar Href="/"
+         IconName="IconName.BootstrapFill"
+         Title="Blazor Bootstrap"
+         DataProvider="SidebarDataProvider" />
+
+@code {
+    IEnumerable<NavItem>? navItems;
+
+    private async Task<SidebarDataProviderResult> SidebarDataProvider(SidebarDataProviderRequest request)
+    {
+        if (navItems is null)
+            navItems = GetNavItems();
+
+        return await Task.FromResult(request.ApplyTo(navItems));
+    }
+
+    private IEnumerable<NavItem> GetNavItems()
+    {
+        navItems = new List<NavItem>
+        {
+            new NavItem { Href = "/", IconName = IconName.HouseDoorFill, Text = "Home"},
+            new NavItem { Href = "/counter", IconName = IconName.HouseAdd, Text = "Counter"},
+            new NavItem { Href = "/products", IconName = IconName.CartFill, Text = "Products"},
+            new NavItem { Href = "/create-product", IconName = IconName.DatabaseAdd, Text = "Create Product"},
+        };
+        return navItems;
+    }
+}
