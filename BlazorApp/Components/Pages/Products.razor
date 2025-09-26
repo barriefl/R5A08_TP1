@@ -1,6 +1,7 @@
 ﻿@page "/products"
 @using BlazorApp.ViewModels
-@inject ProductViewModel ViewModel
+@inject ProductsViewModel ViewModel
+@inject NavigationManager Navigation
 
 <PageTitle>Products</PageTitle>
 
@@ -18,6 +19,8 @@ else
                 <th>Name</th>
                 <th>Brand</th>
                 <th>Product type</th>
+                <th>Update</th>
+                <th>Delete</th>   
             </tr>
         </thead>
         <tbody>
@@ -27,6 +30,8 @@ else
                     <td>@product.NameProduct</td>
                     <td>@product.NameBrand</td>
                     <td>@product.NameProductType</td>
+                    <button class="btn btn-secondary" @onclick="() => OnUpdateClick(product.IdProduct)">Update</button>
+                    <td><Button Color="ButtonColor.Danger"> Delete </Button></td>
                 </tr>
             }
         </tbody>
@@ -37,5 +42,10 @@ else
     protected override async Task OnInitializedAsync()
     {
         await ViewModel.LoadDataAsync();
+    }
+
+    private void OnUpdateClick(int id)
+    {
+        Navigation.NavigateTo($"/update-product/{id}");
     }
 }

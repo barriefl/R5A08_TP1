@@ -16,8 +16,9 @@ namespace BlazorApp
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped<IService<Product>, WebService>(_ => new WebService());
-            builder.Services.AddScoped<ProductViewModel>();
+            builder.Services.AddScoped<ProductsViewModel>();
             builder.Services.AddScoped<CreateProductViewModel>();
+            builder.Services.AddScoped<UpdateProductViewModel>();
 
             var app = builder.Build();
 

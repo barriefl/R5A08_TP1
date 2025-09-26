@@ -1,0 +1,82 @@
+﻿@page "/update-product/{IdProduct:int}"
+@using BlazorApp.Models
+@using BlazorApp.ViewModels
+@inject UpdateProductViewModel ViewModel
+@inject NavigationManager Navigation
+
+@* Erreur sur IdProduct, voir sur la page HTML. *@
+
+<PageTitle>Update a product</PageTitle>
+
+<h1>Update a product</h1>
+
+<EditForm Model="@ViewModel" OnValidSubmit="OnSubmitAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">Id:</div>
+    <div class="mb-3">
+        <NumberInput @bind-Value="@ViewModel.IdProduct" Placeholder="Id" />
+    </div>
+
+    <div class="mb-3">Name:</div>
+    <div class="mb-3">
+        <TextInput @bind-Value="@ViewModel.NameProduct" Placeholder="Name" />
+    </div>
+
+    <div class="mb-3">Description:</div>
+    <div class="mb-3">
+        <TextInput @bind-Value="@ViewModel.Description" Placeholder="Description" />
+    </div>
+
+    <div class="mb-3">Brand:</div>
+    <div class="mb-3">
+        <TextInput @bind-Value="@ViewModel.NameBrand" Placeholder="Brand" />
+    </div>
+
+    <div class="mb-3">Product Type:</div>
+    <div class="mb-3">
+        <TextInput @bind-Value="@ViewModel.NameProductType" Placeholder="Product Type" />
+    </div>
+
+    <div class="mb-3">Photo Name:</div>
+    <div class="mb-3">
+        <TextInput @bind-Value="@ViewModel.PhotoName" Placeholder="Photo Name" />
+    </div>
+
+    <div class="mb-3">Uri Photo:</div>
+    <div class="mb-3">
+        <TextInput @bind-Value="@ViewModel.UriPhoto" Placeholder="Uri Photo" />
+    </div>
+
+    <div class="mb-3">Real Stock:</div>
+    <div class="mb-3">
+        <NumberInput @bind-Value="@ViewModel.RealStock" Placeholder="Real Stock" />
+    </div>
+
+    <div class="mb-3">Min Stock:</div>
+    <div class="mb-3">
+        <NumberInput @bind-Value="@ViewModel.MinStock" Placeholder="Min Stock" />
+    </div>
+
+    <div class="mb-3">Max Stock:</div>
+    <div class="mb-3">
+        <NumberInput @bind-Value="@ViewModel.MaxStock" Placeholder="Max Stock" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</EditForm>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        int idProduct = int.Parse((string?)Navigation.Uri.Split("update-product")[1] ?? "0");
+        await ViewModel.LoadProductAsync(idProduct);
+    }
+
+    private async void OnSubmitAsync()
+    {
+        int idProduct = ViewModel.IdProduct;
+        await ViewModel.UpdateProductAsync(idProduct);
+    }
+}

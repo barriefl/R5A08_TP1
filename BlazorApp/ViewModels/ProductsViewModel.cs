@@ -1,14 +1,15 @@
 ﻿using BlazorApp.Models;
 using BlazorApp.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.AspNetCore.Components;
 
 namespace BlazorApp.ViewModels
 {
-    public partial class ProductViewModel : ObservableObject
+    public partial class ProductsViewModel : ObservableObject
     {
         private readonly IService<Product> _productService;
 
-        public ProductViewModel(IService<Product> productService)
+        public ProductsViewModel(IService<Product> productService)
         {
             _productService = productService;
         }

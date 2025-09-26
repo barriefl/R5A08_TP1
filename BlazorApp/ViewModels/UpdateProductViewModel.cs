@@ -4,16 +4,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BlazorApp.ViewModels
 {
-    public partial class CreateProductViewModel
+    public partial class UpdateProductViewModel
     {
         private readonly IService<Product> _productService;
-        private readonly ProductsViewModel _productViewModel;
 
-        public CreateProductViewModel(IService<Product> productService, ProductsViewModel productViewModel)
+        public UpdateProductViewModel(IService<Product> productService)
         {
             _productService = productService;
-            _productViewModel = productViewModel;
         }
+
+        [Required]
+        public int IdProduct { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "Product name is limited to 100 caracters.")]
@@ -26,7 +27,7 @@ namespace BlazorApp.ViewModels
         public string NameBrand { get; set; }
 
         [Required]
-        public string NameProductType { get; set; }    
+        public string NameProductType { get; set; }
 
         [Required]
         public string PhotoName { get; set; }
@@ -43,16 +44,23 @@ namespace BlazorApp.ViewModels
         [Required]
         public int MaxStock { get; set; }
 
-        public async Task AddProductAsync(Product product)
+        public async Task LoadProductAsync(int id)
         {
-            await _productService.AddAsync(product);
-            await _productViewModel.LoadDataAsync();
+            await _productService.GetByIdAsync(id);
+        }
+
+        public async Task UpdateProductAsync(int idProduct)
+        {
+            Product product = ViewModelToModel();
+
+            await _productService.UpdateAsync(product);
         }
 
         public Product ViewModelToModel()
         {
             return new Product
             {
+                IdProduct = IdProduct,
                 NameProduct = NameProduct,
                 DescriptionProduct = Description,
                 NameBrand = NameBrand,
