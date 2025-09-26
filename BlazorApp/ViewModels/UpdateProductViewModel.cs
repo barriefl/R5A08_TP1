@@ -1,5 +1,6 @@
 ﻿using BlazorApp.Models;
 using BlazorApp.Services;
+using Microsoft.AspNetCore.Components;
 using System.ComponentModel.DataAnnotations;
 
 namespace BlazorApp.ViewModels

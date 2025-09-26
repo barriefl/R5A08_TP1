@@ -1,4 +1,4 @@
-﻿@page "/update-product/{IdProduct:int}"
+﻿@page "/update-product/{id:int}"
 @using BlazorApp.Models
 @using BlazorApp.ViewModels
 @inject UpdateProductViewModel ViewModel
@@ -68,10 +68,12 @@
 </EditForm>
 
 @code {
+    [Parameter]
+    public int id { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        int idProduct = int.Parse((string?)Navigation.Uri.Split("update-product")[1] ?? "0");
-        await ViewModel.LoadProductAsync(idProduct);
+        await ViewModel.LoadProductAsync(id);
     }
 
     private async void OnSubmitAsync()
