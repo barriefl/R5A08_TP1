@@ -12,27 +12,27 @@ namespace BlazorApp.Services
 
         public async Task AddAsync(Product product)
         {
-            await httpClient.PostAsJsonAsync<Product>("products", product);
+            await httpClient.PostAsJsonAsync<Product>("Products", product);
         }
 
         public async Task DeleteAsync(int id)
         {
-            await httpClient.DeleteAsync($"product/{id}");
+            await httpClient.DeleteAsync($"Products/{id}");
         }
 
         public async Task<IEnumerable<Product>?> GetAllAsync()
         {
-            return await httpClient.GetFromJsonAsync<IEnumerable<Product>?>("products");
+            return await httpClient.GetFromJsonAsync<IEnumerable<Product>?>("Products");
         }
 
         public async Task<Product?> GetByIdAsync(int id)
         {
-            return await httpClient.GetFromJsonAsync<Product?>($"product/{id}");
+            return await httpClient.GetFromJsonAsync<Product?>($"Products/GetById/{id}");
         }
 
         public async Task<Product?> GetByNameAsync(string name)
         {
-            var response = await httpClient.PostAsJsonAsync("products/search", name);
+            var response = await httpClient.PostAsJsonAsync("Products/GetByName", name);
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadFromJsonAsync<Product>();
@@ -40,7 +40,7 @@ namespace BlazorApp.Services
 
         public async Task UpdateAsync(Product updatedEntity)
         {
-            await httpClient.PutAsJsonAsync<Product>($"products/{updatedEntity.IdProduct}", updatedEntity);
+            await httpClient.PutAsJsonAsync<Product>($"Products/{updatedEntity.IdProduct}", updatedEntity);
         }
     }
 }

@@ -47,7 +47,17 @@ namespace BlazorApp.ViewModels
 
         public async Task LoadProductAsync(int id)
         {
-            await _productService.GetByIdAsync(id);
+            Product selectedProduct = await _productService.GetByIdAsync(id);
+            IdProduct = selectedProduct.IdProduct;
+            NameProduct = selectedProduct.NameProduct;
+            Description = selectedProduct.DescriptionProduct;
+            NameBrand = selectedProduct.NameBrand;
+            NameProductType = selectedProduct.NameProductType;
+            PhotoName = selectedProduct.PhotoNameProduct;
+            UriPhoto = selectedProduct.UriPhotoProduct;
+            RealStock = selectedProduct.RealStock;
+            MinStock = selectedProduct.MinStock;
+            MaxStock = selectedProduct.MaxStock;
         }
 
         public async Task UpdateProductAsync(int idProduct)

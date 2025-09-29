@@ -14,9 +14,9 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <div class="mb-3">Id:</div>
+    <div class="mb-3" hidden>Id:</div>
     <div class="mb-3">
-        <NumberInput @bind-Value="@ViewModel.IdProduct" Placeholder="Id" />
+        <NumberInput @bind-Value="@ViewModel.IdProduct" Placeholder="Id" Disabled=true hidden/>
     </div>
 
     <div class="mb-3">Name:</div>
@@ -64,7 +64,7 @@
         <NumberInput @bind-Value="@ViewModel.MaxStock" Placeholder="Max Stock" />
     </div>
 
-    <button type="submit" class="btn btn-primary">Create</button>
+    <button type="submit" class="btn btn-primary">Update</button>
 </EditForm>
 
 @code {
