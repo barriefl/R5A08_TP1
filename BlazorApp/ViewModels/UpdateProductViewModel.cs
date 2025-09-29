@@ -60,11 +60,19 @@ namespace BlazorApp.ViewModels
             MaxStock = selectedProduct.MaxStock;
         }
 
-        public async Task UpdateProductAsync(int idProduct)
+        public async Task<bool> UpdateProductAsync(int idProduct)
         {
-            Product product = ViewModelToModel();
+            try
+            {
+                Product product = ViewModelToModel();
 
-            await _productService.UpdateAsync(product);
+                await _productService.UpdateAsync(product);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public Product ViewModelToModel()

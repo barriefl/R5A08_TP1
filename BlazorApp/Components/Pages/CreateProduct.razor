@@ -7,6 +7,8 @@
 
 <h1>Create a product</h1>
 
+<Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight" />
+
 <EditForm Model="@ViewModel" OnValidSubmit="OnSubmitAsync">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -60,9 +62,31 @@
 </EditForm>
 
 @code {
+    List<ToastMessage> messages = new List<ToastMessage>();
+
     private async void OnSubmitAsync()
     {
-        var product = ViewModel.ViewModelToModel();
-        await ViewModel.AddProductAsync(product);
+        Product product = ViewModel.ViewModelToModel();
+        bool success = await ViewModel.AddProductAsync(product);
+        if (success)
+        {
+            AddToastMessage(ToastType.Success, "Product created.", "Product created with success !");
+        }
+        else
+        {
+            AddToastMessage(ToastType.Danger, "Error.", "Failed to create the product.");
+        }
+    }
+
+    private void AddToastMessage(ToastType type, string title, string message)
+    {
+        messages.Add(new ToastMessage
+        {
+            Type = type,
+            Title = title,
+            Message = message
+        });
+
+        StateHasChanged();
     }
 }

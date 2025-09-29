@@ -43,10 +43,17 @@ namespace BlazorApp.ViewModels
         [Required]
         public int MaxStock { get; set; }
 
-        public async Task AddProductAsync(Product product)
+        public async Task<bool> AddProductAsync(Product product)
         {
-            await _productService.AddAsync(product);
-            await _productViewModel.LoadDataAsync();
+            try 
+            {
+                await _productService.AddAsync(product);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public Product ViewModelToModel()

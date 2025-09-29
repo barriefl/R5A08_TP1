@@ -7,12 +7,16 @@
 
 <h1>Products</h1>
 
+<Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight" />
+
 @if (ViewModel.IsLoading)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
+    <ConfirmDialog @ref="dialog" />
+
     <table class="table">
         <thead>
             <tr>
@@ -30,8 +34,8 @@ else
                     <td>@product.NameProduct</td>
                     <td>@product.NameBrand</td>
                     <td>@product.NameProductType</td>
-                    <button class="btn btn-secondary" @onclick="() => OnUpdateClick(product.IdProduct)">Update</button>
-                    <td><Button Color="ButtonColor.Danger"> Delete </Button></td>
+                    <td><Button Color="ButtonColor.Secondary" @onclick="() => OnUpdateClick(product.IdProduct)"> Update </Button></td>
+                    <td><Button Color="ButtonColor.Danger" @onclick="() => ShowConfirmationAsync(product.IdProduct)"> Delete </Button></td>
                 </tr>
             }
         </tbody>
@@ -39,6 +43,10 @@ else
 }
 
 @code {
+    List<ToastMessage> messages = new List<ToastMessage>();
+
+    private ConfirmDialog dialog = default!;
+
     protected override async Task OnInitializedAsync()
     {
         await ViewModel.LoadDataAsync();
@@ -47,5 +55,39 @@ else
     private void OnUpdateClick(int id)
     {
         Navigation.NavigateTo($"/update-product/{id}");
+    }
+
+    private async Task ShowConfirmationAsync(int id)
+    {
+        bool confirmation = await dialog.ShowAsync(
+            title: "Are you sure you want to delete this product ?",
+            message1: "This will delete the product. Once deleted can not be rolled back.",
+            message2: "Do you want to proceed ?");
+
+        if (confirmation)
+        {
+            bool success = await ViewModel.DeleteProductAsync(id);
+
+            if (success)
+            {
+                AddToastMessage(ToastType.Success, "Product deleted.", "Product deleted with success !");
+            }
+            else
+            {
+                AddToastMessage(ToastType.Danger, "Error.", "Failed to delete the product.");
+            }
+        }
+    }
+
+    private void AddToastMessage(ToastType type, string title, string message)
+    {
+        messages.Add(new ToastMessage
+        {
+            Type = type,
+            Title = title,
+            Message = message
+        });
+
+        StateHasChanged();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BlazorApp.Models;
 using BlazorApp.Services;
+using BlazorBootstrap;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.AspNetCore.Components;
 
@@ -23,12 +24,25 @@ namespace BlazorApp.ViewModels
 
             try
             {
-                await Task.Delay(TimeSpan.FromSeconds(2)); // simulate loading
                 Products = await _productService.GetAllAsync();
             }
             finally
             {
                 IsLoading = false;
+            }
+        }
+
+        public async Task<bool> DeleteProductAsync(int id)
+        {
+            try 
+            {
+                await _productService.DeleteAsync(id);
+                await LoadDataAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

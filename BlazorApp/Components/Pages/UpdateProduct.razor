@@ -10,6 +10,8 @@
 
 <h1>Update a product</h1>
 
+<Toasts class="p-3" Messages="messages" Placement="ToastsPlacement.TopRight" />
+
 <EditForm Model="@ViewModel" OnValidSubmit="OnSubmitAsync">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -68,6 +70,8 @@
 </EditForm>
 
 @code {
+    List<ToastMessage> messages = new List<ToastMessage>();
+
     [Parameter]
     public int id { get; set; }
 
@@ -76,9 +80,30 @@
         await ViewModel.LoadProductAsync(id);
     }
 
-    private async void OnSubmitAsync()
+    private async Task OnSubmitAsync()
     {
         int idProduct = ViewModel.IdProduct;
-        await ViewModel.UpdateProductAsync(idProduct);
+        bool success = await ViewModel.UpdateProductAsync(idProduct);
+
+        if (success)
+        {
+            AddToastMessage(ToastType.Success, "Product updated.", "Product updated with success !");
+        }
+        else
+        {
+            AddToastMessage(ToastType.Danger, "Error.", "Failed to update the product.");
+        }
+    }
+
+    private void AddToastMessage(ToastType type, string title, string message)
+    {
+        messages.Add(new ToastMessage
+        {
+            Type = type,
+            Title = title,
+            Message = message
+        });
+
+        StateHasChanged();
     }
 }
