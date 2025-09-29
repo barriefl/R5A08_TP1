@@ -74,12 +74,12 @@ namespace BlazorApp.ViewModels
 
         public void ClearForm()
         {
-            NameProduct = string.Empty;
-            NameBrand = string.Empty;
-            NameProductType = string.Empty;
-            Description = string.Empty;
-            PhotoName = string.Empty;
-            UriPhoto = string.Empty;
+            NameProduct = null;
+            NameBrand = null;
+            NameProductType = null;
+            Description = null;
+            PhotoName = null;
+            UriPhoto = null;
             RealStock = 0;
             MinStock = 0;
             MaxStock = 0;

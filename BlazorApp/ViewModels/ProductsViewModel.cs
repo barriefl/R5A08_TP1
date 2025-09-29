@@ -15,8 +15,8 @@ namespace BlazorApp.ViewModels
             _productService = productService;
         }
 
-        [ObservableProperty] private bool _isLoading;
-        [ObservableProperty] private IEnumerable<Product> _products = Enumerable.Empty<Product>();
+        public bool IsLoading { get; set; }
+        public IEnumerable<Product> Products = Enumerable.Empty<Product>();
 
         public async Task LoadDataAsync()
         {

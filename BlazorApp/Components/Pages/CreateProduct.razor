@@ -58,13 +58,14 @@
         <NumberInput @bind-Value="@ViewModel.MaxStock" Placeholder="Max Stock" />
     </div>
 
-    <button type="submit" class="btn btn-primary">Create</button>
+    <Button Color="ButtonColor.Primary" @onclick="OnSubmitAsync"> Create </Button>
+    <Button Color="ButtonColor.Secondary" @onclick="ClearForm"> Clear Form </Button>
 </EditForm>
 
 @code {
     List<ToastMessage> messages = new List<ToastMessage>();
 
-    private async void OnSubmitAsync()
+    private async Task OnSubmitAsync()
     {
         Product product = ViewModel.ViewModelToModel();
         bool success = await ViewModel.AddProductAsync(product);
@@ -76,6 +77,12 @@
         {
             AddToastMessage(ToastType.Danger, "Error.", "Failed to create the product.");
         }
+    }
+
+    private void ClearForm()
+    {
+        ViewModel.ClearForm();
+        StateHasChanged();
     }
 
     private void AddToastMessage(ToastType type, string title, string message)
