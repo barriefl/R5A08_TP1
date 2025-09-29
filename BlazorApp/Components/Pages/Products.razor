@@ -1,5 +1,6 @@
 ﻿@page "/products"
 @using BlazorApp.ViewModels
+@using BlazorApp.Models
 @inject ProductsViewModel ViewModel
 @inject NavigationManager Navigation
 
@@ -16,6 +17,17 @@
 else
 {
     <ConfirmDialog @ref="dialog" />
+
+    <div class="row">
+        <div class="col-md-5 col-sm-12">
+            <AutoComplete @bind-Value="ViewModel.SelectedProductName"
+                          TItem="Product"
+                          DataProvider="ProductsDataProvider"
+                          PropertyName="NameProduct"
+                          Placeholder="Search a product..."
+                          OnChanged="OnAutoCompleteChanged" />
+        </div>
+    </div>
 
     <table class="table">
         <thead>
@@ -88,6 +100,36 @@ else
             Message = message
         });
 
+        StateHasChanged();
+    }
+
+    private async Task<AutoCompleteDataProviderResult<Product>> ProductsDataProvider(AutoCompleteDataProviderRequest<Product> request)
+    {
+        var products = await ViewModel.GetProductsByNameAsync(request.Filter.Value);
+        return new AutoCompleteDataProviderResult<Product>
+        {
+            Data = products,
+            TotalCount = products.Count()
+        };
+    }
+
+    private async Task OnAutoCompleteChanged(Product selected)
+    {
+        // Si champ vidé avec la croix
+        if (selected is null || string.IsNullOrWhiteSpace(ViewModel.SelectedProductName))
+        {
+            ViewModel.SelectedProductName = null;
+
+            // ⏳ petit délai avant StateHasChanged pour laisser AutoComplete finir son JS
+            await Task.Delay(100);
+
+            await ViewModel.LoadDataAsync();
+            StateHasChanged();
+            return;
+        }
+
+        // Si un produit est sélectionné
+        await ViewModel.FilterProductsByNameAsync(selected.NameProduct);
         StateHasChanged();
     }
 }

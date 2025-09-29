@@ -30,12 +30,13 @@ namespace BlazorApp.Services
             return await httpClient.GetFromJsonAsync<Product?>($"Products/GetById/{id}");
         }
 
-        public async Task<Product?> GetByNameAsync(string name)
+        public async Task<IEnumerable<Product>?> GetByNameAsync(string name)
         {
-            var response = await httpClient.PostAsJsonAsync("Products/GetByName", name);
-            response.EnsureSuccessStatusCode();
+            return await httpClient.GetFromJsonAsync<IEnumerable<Product>?>($"Products/GetByName/{name}");
+            //var response = await httpClient.PostAsJsonAsync("Products/GetByName", name);
+            //response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync<Product>();
+            //return await response.Content.ReadFromJsonAsync<IEnumerable<Product>?>();
         }
 
         public async Task UpdateAsync(Product updatedEntity)

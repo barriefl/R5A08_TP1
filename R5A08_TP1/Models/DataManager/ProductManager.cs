@@ -22,7 +22,8 @@ namespace R5A08_TP1.Models.DataManager
             return await products
                 .Include(p => p.BrandNavigation)
                 .Include(p => p.ProductTypeNavigation)
-                .Where(p => p.NameProduct.ToUpper() == name.ToUpper()).ToListAsync();
+                .Where(p => p.NameProduct.ToUpper().Contains(name.ToUpper()))
+                .ToListAsync();
         }
 
         public async Task<ActionResult<IEnumerable<Product>>> GetAllWithIncludesAsync()

@@ -17,6 +17,10 @@ namespace BlazorApp.ViewModels
 
         public bool IsLoading { get; set; }
         public IEnumerable<Product> Products = Enumerable.Empty<Product>();
+        //public IEnumerable<Product> Products { get; set; } = new();
+
+        public string? SelectedProductName { get; set; }
+        public Product? SelectedProduct { get; set; }
 
         public async Task LoadDataAsync()
         {
@@ -32,6 +36,12 @@ namespace BlazorApp.ViewModels
             }
         }
 
+        public async Task FilterProductsByNameAsync(string name)
+        {
+            var filtered = await _productService.GetByNameAsync(name);
+            Products = filtered?.ToList() ?? [];
+        }
+
         public async Task<bool> DeleteProductAsync(int id)
         {
             try 
@@ -44,6 +54,17 @@ namespace BlazorApp.ViewModels
             {
                 return false;
             }
+        }
+
+        public async Task<IEnumerable<Product>> GetProductsByNameAsync(string name)
+        {
+           return await _productService.GetByNameAsync(name);
+        }
+
+        public void OnProductSelected(Product product)
+        {
+            SelectedProduct = product;
+            SelectedProductName = product?.NameProduct;
         }
     }
 }

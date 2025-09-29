@@ -9,6 +9,6 @@ namespace BlazorApp.Services
         Task AddAsync(TEntity entity);
         Task UpdateAsync(TEntity updatedEntity);
         Task DeleteAsync(int id);
-        Task<Product?> GetByNameAsync(string name);
+        Task<IEnumerable<TEntity>?> GetByNameAsync(string name);
     }
 }
