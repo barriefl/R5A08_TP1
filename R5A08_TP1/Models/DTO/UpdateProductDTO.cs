@@ -1,4 +1,5 @@
 ﻿
+
 namespace R5A08_TP1.Models.DTO
 {
     public class UpdateProductDTO
@@ -7,6 +8,7 @@ namespace R5A08_TP1.Models.DTO
         public string NameProduct { get; set; }
         public string NameBrand { get; set; }
         public string NameProductType { get; set; }
+        public string DescriptionProduct { get; set; }
         public string PhotoNameProduct { get; set; }
         public string UriPhotoProduct { get; set; }
         public int RealStock { get; set; }
@@ -20,6 +22,7 @@ namespace R5A08_TP1.Models.DTO
                    NameProduct == dTO.NameProduct &&
                    NameBrand == dTO.NameBrand &&
                    NameProductType == dTO.NameProductType &&
+                   DescriptionProduct == dTO.DescriptionProduct &&
                    PhotoNameProduct == dTO.PhotoNameProduct &&
                    UriPhotoProduct == dTO.UriPhotoProduct &&
                    RealStock == dTO.RealStock &&
@@ -34,6 +37,7 @@ namespace R5A08_TP1.Models.DTO
             hash.Add(NameProduct);
             hash.Add(NameBrand);
             hash.Add(NameProductType);
+            hash.Add(DescriptionProduct);
             hash.Add(PhotoNameProduct);
             hash.Add(UriPhotoProduct);
             hash.Add(RealStock);

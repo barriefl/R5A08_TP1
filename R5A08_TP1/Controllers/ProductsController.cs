@@ -115,6 +115,9 @@ namespace R5A08_TP1.Controllers
 
             Product product = _mapper.Map(productDto, productToUpdate.Value);
 
+            product.BrandNavigation = brand;
+            product.ProductTypeNavigation = productType;
+
             product.IdBrand = brand.IdBrand;
             product.IdProductType = productType.IdProductType;
 
@@ -150,6 +153,9 @@ namespace R5A08_TP1.Controllers
             }
 
             Product product = _mapper.Map<Product>(productDto);
+
+            product.BrandNavigation = brand;
+            product.ProductTypeNavigation = productType;
 
             product.IdBrand = brand.IdBrand;
             product.IdProductType = productType.IdProductType;

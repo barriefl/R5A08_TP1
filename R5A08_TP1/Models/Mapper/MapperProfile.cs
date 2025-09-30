@@ -20,18 +20,12 @@ namespace R5A08_TP1.Models.Mapper
                 .ForMember(dest => dest.Restocking, opt => opt.MapFrom(src => src.RealStock < src.MinStock));
 
             // POST.
-            CreateMap<CreateProductDTO, Product>()
-                .ForMember(dest => dest.BrandNavigation, opt => opt.Ignore())
-                .ForMember(dest => dest.ProductTypeNavigation, opt => opt.Ignore())
-                .ForMember(dest => dest.IdBrand, opt => opt.Ignore())
-                .ForMember(dest => dest.IdProductType, opt => opt.Ignore());
+            CreateMap<CreateProductDTO, Product>();
 
             // PUT.
             CreateMap<UpdateProductDTO, Product>()
-                .ForMember(dest => dest.IdBrand, opt => opt.Ignore())
-                .ForMember(dest => dest.IdProductType, opt => opt.Ignore())
-                .ForMember(dest => dest.BrandNavigation, opt => opt.Ignore())
-                .ForMember(dest => dest.ProductTypeNavigation, opt => opt.Ignore());
+                .ForMember(dest => dest.BrandNavigation, opt => opt.MapFrom(src => new Brand { NameBrand = src.NameBrand }))
+                .ForMember(dest => dest.ProductTypeNavigation, opt => opt.MapFrom(src => new ProductType { NameProductType = src.NameProductType }));
         }
     }
 }
