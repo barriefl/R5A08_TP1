@@ -1,13 +1,20 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using R5A08_TP1.Models.DTO;
 using R5A08_TP1.Models.EntityFramework;
+using System.Security.AccessControl;
+using System.Security.Cryptography.X509Certificates;
 
 namespace R5A08_TP1.Models.Mapper
 {
     public class MapperProfile : Profile
     {
-        public MapperProfile()
+        private readonly AppDbContext _context;
+
+        public MapperProfile(AppDbContext context)
         {
+            _context = context;
+
             // Source -> Target.
 
             // GET.
@@ -20,12 +27,43 @@ namespace R5A08_TP1.Models.Mapper
                 .ForMember(dest => dest.Restocking, opt => opt.MapFrom(src => src.RealStock < src.MinStock));
 
             // POST.
-            CreateMap<CreateProductDTO, Product>();
+            CreateMap<Product, CreateProductDTO>();
+            CreateMap<CreateProductDTO, Product>()
+                .AfterMap((dto, product) =>
+                {
+                    SetBrandAndProductType(product, dto.NameBrand, dto.NameProductType);
+                });
 
             // PUT.
+            CreateMap<Product, UpdateProductDTO>();
             CreateMap<UpdateProductDTO, Product>()
-                .ForMember(dest => dest.BrandNavigation, opt => opt.MapFrom(src => new Brand { NameBrand = src.NameBrand }))
-                .ForMember(dest => dest.ProductTypeNavigation, opt => opt.MapFrom(src => new ProductType { NameProductType = src.NameProductType }));
+                .AfterMap((dto, product) =>
+                {
+                    SetBrandAndProductType(product, dto.NameBrand, dto.NameProductType);
+                });
+        }
+
+        public void SetBrandAndProductType(Product product, string nameBrand, string nameProductType)
+        {
+            Brand? brand = _context.Brands.FirstOrDefault(b => b.NameBrand == nameBrand);
+            if (brand == null) 
+            {
+                brand = new Brand { NameBrand = nameBrand };
+                _context.Brands.Add(brand);
+                _context.SaveChanges();
+            }
+            product.IdBrand = brand?.IdBrand;
+            product.BrandNavigation = brand;
+
+            ProductType? productType = _context.ProductTypes.FirstOrDefault(pt => pt.NameProductType == nameProductType);
+            if (productType == null)
+            {
+                productType = new ProductType { NameProductType = nameProductType };
+                _context.ProductTypes.Add(productType);
+                _context.SaveChanges();
+            }
+            product.IdProductType = productType?.IdProductType;
+            product.ProductTypeNavigation = productType;
         }
     }
 }

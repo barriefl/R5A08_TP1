@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using R5A08_TP1.Models.DTO;
 using R5A08_TP1.Models.EntityFramework;
+using R5A08_TP1.Models.Mapper;
 using R5A08_TP1.Models.Repository;
 using System;
 using System.Collections.Generic;
@@ -20,13 +21,20 @@ namespace R5A08_TP1.Controllers
         private readonly IBrandRepository brandRepository;
         private readonly IProductTypeRepository productTypeRepository;
         private readonly IMapper _mapper;
+        private AppDbContext _context;
 
-        public ProductsController(IProductRepository productRepo, IMapper mapper, IBrandRepository brandRepo, IProductTypeRepository productTypeRepo)
+        public ProductsController(IProductRepository productRepo, IBrandRepository brandRepo, IProductTypeRepository productTypeRepo)
         {
             productRepository = productRepo;
-            _mapper = mapper;
             brandRepository = brandRepo;
             productTypeRepository = productTypeRepo;
+
+            _context = new AppDbContext();
+            MapperConfiguration config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MapperProfile(_context));
+            });
+            _mapper = config.CreateMapper();
         }
 
         // GET: Products
@@ -113,7 +121,9 @@ namespace R5A08_TP1.Controllers
                 await productTypeRepository.AddAsync(productType);
             }
 
-            Product product = _mapper.Map(productDto, productToUpdate.Value);
+            Product product = productToUpdate.Value;
+
+            _mapper.Map(productDto, product);
 
             product.BrandNavigation = brand;
             product.ProductTypeNavigation = productType;

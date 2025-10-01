@@ -31,11 +31,11 @@ namespace R5A08_TP1.Controllers.Tests
 
             MapperConfiguration config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<MapperProfile>();
+                cfg.AddProfile(new MapperProfile(context));
             });
             mapper = config.CreateMapper();
 
-            controller = new ProductsController(productRepository, mapper, brandRepository, productTypeRepository);
+            controller = new ProductsController(productRepository, brandRepository, productTypeRepository);
         }
 
         private Product productInDb1 = new Product();
@@ -210,6 +210,7 @@ namespace R5A08_TP1.Controllers.Tests
             Assert.IsInstanceOfType(action, typeof(ActionResult<Product>), "Result n'est pas un action result.");
             Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult), "Result n'est pas un CreatedAtActionResult.");
 
+            //Product returnProduct = mapper.Map<Product>(newProductInDb);
             Product returnProduct = (action.Result as CreatedAtActionResult)?.Value as Product;
             Assert.AreEqual(expectedProduct, returnProduct, "Les produits ne sont pas identiques.");
         }
@@ -284,23 +285,35 @@ namespace R5A08_TP1.Controllers.Tests
             Assert.AreEqual(productToGet, productInDb, "Le produit a mal été modifié.");
         }
 
-        //[TestMethod()]
-        //public void ShouldNotUpdateProductBecauseProductDoesNotExist()
-        //{
-        //    // Given : Un produit en base de données.
-        //    Product produitToUpdate = new Product()
-        //    {
-        //        IdProduit = 0,
-        //        NomProduit = "Chaise Modifiée",
-        //        DescriptionProduit = "Une superbe chaise modifiée",
-        //        NomPhotoProduit = "Une superbe chaise bleu modifiée",
-        //        UriPhotoProduit = "https://ikea.fr/chaise_modifiee.jpg"
-        //    };
-        //    // When : J'appelle la méthode get de mon API pour récupérer le produit.
-        //    IActionResult action = controller.PutProduit(produitToUpdate.IdProduit, produitToUpdate).Result;
-        //    // Then : On récupère le produit et le code de retour est 404.
-        //    Assert.IsInstanceOfType(action, typeof(NotFoundResult), "Result n'est pas un NotFoundResult.");
-        //}
+        [TestMethod]
+        public void ShouldNotUpdateProductBecauseIdInUrlIsDifferent()
+        {
+            // Given : Un produit à mettre à jour.
+            UpdateProductDTO updatedProductDTO = mapper.Map<UpdateProductDTO>(productInDb1);
+
+            // When : On appelle la méthode Put du controller pour mettre à jour le produit,
+            // mais en précisant un ID différent de celui du produit enregistré
+            IActionResult action = controller.PutProduct(0, updatedProductDTO).Result;
+            
+            // Then : On ne renvoie rien et le code HTTP est BadRequest (400).
+            Assert.IsNotNull(action);
+            Assert.IsInstanceOfType(action, typeof(BadRequestResult));
+        }
+
+        [TestMethod]
+        public void ShouldNotUpdateProductBecauseProductDoesNotExist()
+        {
+            // Given : Un produit à mettre à jour.
+            UpdateProductDTO updatedProductDTO = mapper.Map<UpdateProductDTO>(productInDb2);
+            updatedProductDTO.IdProduct = 0;
+
+            // When : On appelle la méthode Put de l'API pour mettre à jour un produit qui n'est pas enregistré.
+            IActionResult action = controller.PutProduct(updatedProductDTO.IdProduct, updatedProductDTO).Result;
+
+            // Then : On ne renvoie rien et le code HTTP est NotFound (404).
+            Assert.IsNotNull(action);
+            Assert.IsInstanceOfType(action, typeof(NotFoundResult));
+        }
 
         [TestCleanup]
         public void Cleanup()
