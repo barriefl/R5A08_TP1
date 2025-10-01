@@ -113,7 +113,7 @@ namespace R5A08_TP1.Controllers
         /// <param name="id">L'id du produit.</param>
         /// <param name="productDto">L'objet produit.</param>
         /// <returns>Une réponse HTTP 204 NoContent.</returns>
-        /// <response code="204">Le vintie a été modifié avec succès.</response>
+        /// <response code="204">Le produit a été modifié avec succès.</response>
         /// <response code="400">L'id donné ne correspond pas à l'id du produit.</response>
         /// <response code="404">Le produit n'existe pas.</response>
         /// <response code="500">Une erreur interne s'est produite sur le serveur.</response>
