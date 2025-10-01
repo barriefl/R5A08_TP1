@@ -208,46 +208,43 @@ namespace R5A08_TP1.Controllers.Tests
         //    Assert.IsInstanceOfType(action, typeof(NotFoundResult), "Result n'est pas un NotFoundResult.");
         //}
 
-        private AppDbContext context;
+        private readonly AppDbContext context;
 
-        private ProductsController controller;
+        private readonly ProductsController controller;
 
-        private IProductRepository productRepository;
-        private IBrandRepository brandRepository;
-        private IProductTypeRepository productTypeRepository;
+        private readonly Mock<IProductRepository> productRepositoryMock;
 
-        private Mock<IProductRepository> productRepositoryMock;
-        private Mock<IBrandRepository> brandRepositoryMock;
-        private Mock<IProductTypeRepository> productTypeRepositoryMock;
-
-        private IMapper mapper;
-
-        private Product productInDb1;
-        private Product productInDb2;
-
-        private Brand brandInDb1;
-        private Brand brandInDb2;
-
-        private ProductType productTypeInDb1;
-        private ProductType productTypeInDb2;
+        private readonly IMapper mapper;
 
         public ProductsControllerMockTests()
         {
             var builder = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql();
-            context = new AppDbContext();
-
-            productRepository = new ProductManager(context);
 
             productRepositoryMock = new Mock<IProductRepository>();
+
+            controller = new ProductsController(productRepositoryMock.Object);
+
+            context = new AppDbContext();
 
             MapperConfiguration config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new MapperProfile(context));
             });
-            mapper = config.CreateMapper();
+            mapper = config.CreateMapper();       
+        }
 
-            controller = new ProductsController(productRepository);
+        Product productInDb1;
+        Product productInDb2;
 
+        Brand brandInDb1;
+        Brand brandInDb2;
+
+        ProductType productTypeInDb1;
+        ProductType productTypeInDb2;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
             brandInDb1 = new Brand()
             {
                 IdBrand = 1,
@@ -297,20 +294,18 @@ namespace R5A08_TP1.Controllers.Tests
                 MaxStock = 25
             };
         }
-        
+
         [TestMethod()]
         public void ShouldGetProduct()
         {
-            // Given : Un produit en base de données.
-            // Pas nécessaire, fait dans le TestInitialize.
-            int testId = productInDb1.IdProduct;
-            productRepositoryMock.Setup(p => p.GetByIdAsync(productInDb1.IdProduct)).ReturnsAsync(productInDb1);
+            // Given : Un produit.
+            productRepositoryMock.Setup(r => r.GetByIdWithIncludesAsync(productInDb1.IdProduct)).ReturnsAsync(productInDb1);
 
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
             ActionResult<ProductDetailsDTO> action = controller.GetProductById(productInDb1.IdProduct).Result;
 
             // Then : On récupère le produit et le code de retour est 200.
-            productRepositoryMock.Verify(p => p.GetByIdWithIncludesAsync(productInDb1.IdProduct), Times.Once);
+            productRepositoryMock.Verify(r => r.GetByIdWithIncludesAsync(productInDb1.IdProduct), Times.Once, "La méthode n'a pas été utilisée.");
 
             Assert.IsNotNull(action, "L'action ne doit pas être nulle.");
             Assert.IsInstanceOfType(action, typeof(ActionResult<ProductDetailsDTO>), "L'action doit être de type ActionResult<ProductDetailsDTO>");
@@ -324,190 +319,256 @@ namespace R5A08_TP1.Controllers.Tests
         [TestMethod()]
         public void GetProductShouldReturnNotFound()
         {
-            // Given : Aucun produit en base de données.
-            productRepositoryMock.Setup(p => p.GetByIdAsync(0)).ReturnsAsync((Product)null);
+            // Given : Aucun produit.
+            productRepositoryMock.Setup(p => p.GetByIdWithIncludesAsync(0)).ReturnsAsync((Product)null);
 
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
             ActionResult<ProductDetailsDTO> action = controller.GetProductById(0).Result;
 
             // Then : On récupère le produit et le code de retour est 404.
-            productRepositoryMock.Verify(p => p.GetByIdAsync(0), Times.Never);
+            productRepositoryMock.Verify(p => p.GetByIdWithIncludesAsync(0), Times.Once, "La méthode n'a pas été utilisée.");
 
             Assert.IsNull(action.Value, "L'action doit être nulle.");
             Assert.IsInstanceOfType(action.Result, typeof(NotFoundResult), "Le result doit être de type NotFoundResult.");
         }
 
-        //[TestMethod()]
-        //public void ShouldGetAllProducts()
-        //{
-        //    // Given : Deux produits en base de données.
-        //    // Pas nécessaire, fait dans le TestInitialize.
+        [TestMethod()]
+        public void ShouldGetAllProducts()
+        {
+            // Given : Deux produits.
+            productRepositoryMock.Setup(r => r.GetAllWithIncludesAsync()).ReturnsAsync(new List<Product> { productInDb1, productInDb2 });
 
-        //    // When : J'appelle la méthode get de mon API pour récupérer le produit.
-        //    ActionResult<IEnumerable<ProductDTO>> action = controller.GetProducts().Result;
+            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            ActionResult<IEnumerable<ProductDTO>> action = controller.GetProducts().Result;
 
-        //    // Then : On récupère le produit et le code de retour est 200.
-        //    Assert.IsNotNull(action, "L'action ne doit pas être nulle.");
-        //    Assert.IsInstanceOfType(action, typeof(ActionResult<IEnumerable<ProductDTO>>), "L'action doit être de type ActionResult<IEnumerable<ProductDTO>>.");
-        //    Assert.IsInstanceOfType(action.Result, typeof(OkObjectResult), "Le result doit être de type OkObjectResult.");
+            // Then : On récupère le produit et le code de retour est 200.
+            productRepositoryMock.Verify(r => r.GetAllWithIncludesAsync(), Times.Once, "La méthode n'a pas été utilisée.");
 
-        //    List<ProductDTO> returnProducts = (action.Result as OkObjectResult)?.Value as List<ProductDTO>;
-        //    Assert.AreEqual(numberOfProductsInDb, returnProducts.Count(), $"La liste de produits dans la base de données doit être de {numberOfProductsInDb}.");
+            Assert.IsNotNull(action, "L'action ne doit pas être nulle.");
+            Assert.IsInstanceOfType(action, typeof(ActionResult<IEnumerable<ProductDTO>>), "L'action doit être de type ActionResult<IEnumerable<ProductDTO>>.");
+            Assert.IsInstanceOfType(action.Result, typeof(OkObjectResult), "Le result doit être de type OkObjectResult.");
 
-        //    List<ProductDTO> productsInDb = mapper.Map<IEnumerable<ProductDTO>>(((OkObjectResult)action.Result).Value).ToList();
-        //    CollectionAssert.AreEqual(productsInDb, returnProducts, "La liste de produits dans la base de données et la liste de produits retournée ne sont pas les mêmes.");
-        //}
+            List<ProductDTO> returnProducts = (action.Result as OkObjectResult)?.Value as List<ProductDTO>;
+            Assert.AreEqual(2, returnProducts.Count(), $"La liste de produits dans la base de données doit être de {2}.");
 
-        //[TestMethod()]
-        //public void ShouldCreateProduct()
-        //{
-        //    // Given : On créer un produit à ajouter en base de données.
-        //    CreateProductDTO newProductInDb = new CreateProductDTO()
-        //    {
-        //        NameProduct = "Table",
-        //        NameBrand = "Gifi",
-        //        NameProductType = "Meuble extérieur",
-        //        DescriptionProduct = "Une superbe table",
-        //        PhotoNameProduct = "Table",
-        //        UriPhotoProduct = "https://ikea.fr/table.jpg",
-        //        RealStock = 15,
-        //        MinStock = 5,
-        //        MaxStock = 50
-        //    };
+            List<ProductDTO> productsInDb = mapper.Map<IEnumerable<ProductDTO>>(((OkObjectResult)action.Result).Value).ToList();
+            CollectionAssert.AreEqual(productsInDb, returnProducts, "La liste de produits dans la base de données et la liste de produits retournée ne sont pas les mêmes.");
+        }
 
-        //    // When : J'appelle la méthode get de mon API pour récupérer le produit.
-        //    ActionResult<Product> action = controller.PostProduct(newProductInDb).Result;
+        [TestMethod()]
+        public void ShouldCreateProduct()
+        {
+            // Given : Création des objets.
+            Brand newBrand = new Brand()
+            {
+                IdBrand = 3,
+                NameBrand = "Conforama"
+            };
+            ProductType newProductType = new ProductType()
+            {
+                IdProductType = 3,
+                NameProductType = "Décoration"
+            };
 
-        //    // Then : On récupère le produit et le code de retour est 200.
+            Product newProduct = new Product()
+            {
+                IdProduct = 3,
+                NameProduct = "Table",
+                IdBrand = 3,
+                IdProductType = 3,
+                DescriptionProduct = "Une superbe table",
+                PhotoNameProduct = "Table",
+                UriPhotoProduct = "https://ikea.fr/table.jpg",
+                RealStock = 15,
+                MinStock = 5,
+                MaxStock = 50
+            };
+            CreateProductDTO newProductDTO = new CreateProductDTO()
+            {
+                NameProduct = "Table",
+                NameBrand = "Conforama",
+                NameProductType = "Décoration",
+                DescriptionProduct = "Une superbe table",
+                PhotoNameProduct = "Table",
+                UriPhotoProduct = "https://ikea.fr/table.jpg",
+                RealStock = 15,
+                MinStock = 5,
+                MaxStock = 50
+            };
+            productRepositoryMock.Setup(r => r.AddAsync(newProduct));
 
-        //    // On vérifie que la marque et le type de produit ont été créés.
-        //    Brand createdBrand = context.Brands.FirstOrDefault(b => b.NameBrand == newProductInDb.NameBrand);
-        //    Assert.IsNotNull(createdBrand, "La marque n'a pas été créée en base de données.");
-        //    Assert.AreEqual(newProductInDb.NameBrand, createdBrand.NameBrand, "Le nom de la marque ne correspond pas.");
+            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            ActionResult<Product> action = controller.PostProduct(newProductDTO).Result;
 
-        //    ProductType createdProductType = context.ProductTypes.FirstOrDefault(pt => pt.NameProductType == newProductInDb.NameProductType);
-        //    Assert.IsNotNull(createdProductType, "Le type de produit n'a pas été créé en base de données.");
-        //    Assert.AreEqual(newProductInDb.NameProductType, createdProductType.NameProductType, "Le nom du type de produit ne correspond pas.");
+            // Then : On récupère le produit et le code de retour est 200.
 
-        //    // On filtre le produit avec tous les champs car l'Id n'existe pas dans le DTO.
-        //    Product expectedProduct = context.Products
-        //        .Include(p => p.BrandNavigation)
-        //        .Include(p => p.ProductTypeNavigation)
-        //        .FirstOrDefault(p =>
-        //            p.NameProduct == newProductInDb.NameProduct &&
-        //            p.DescriptionProduct == newProductInDb.DescriptionProduct &&
-        //            p.RealStock == newProductInDb.RealStock &&
-        //            p.MinStock == newProductInDb.MinStock &&
-        //            p.MaxStock == newProductInDb.MaxStock &&
-        //            p.UriPhotoProduct == newProductInDb.UriPhotoProduct);
+            // On vérifie que la marque et le type de produit ont été créés.
+            Assert.IsNotNull(newBrand, "La marque n'a pas été créée.");
+            Assert.AreEqual(newProduct.IdBrand, newBrand.IdBrand, "Le nom de la marque ne correspond pas.");
 
-        //    Assert.IsNotNull(expectedProduct, "Le produit n'a pas été ajouté en base de données.");
-        //    Assert.IsInstanceOfType(action, typeof(ActionResult<Product>), "Result n'est pas un action result.");
-        //    Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult), "Result n'est pas un CreatedAtActionResult.");
+            Assert.IsNotNull(newProductType, "Le type de produit n'a pas été créé.");
+            Assert.AreEqual(newProduct.IdProductType, newProductType.IdProductType, "Le nom du type de produit ne correspond pas.");
 
-        //    //Product returnProduct = mapper.Map<Product>(newProductInDb);
-        //    Product returnProduct = (action.Result as CreatedAtActionResult)?.Value as Product;
-        //    Assert.AreEqual(expectedProduct, returnProduct, "Les produits ne sont pas identiques.");
-        //}
+            productRepositoryMock.Verify(r => r.AddAsync(It.Is<Product>(p =>
+                p.NameProduct == newProductDTO.NameProduct &&
+                p.DescriptionProduct == newProductDTO.DescriptionProduct &&
+                p.PhotoNameProduct == newProductDTO.PhotoNameProduct &&
+                p.UriPhotoProduct == newProductDTO.UriPhotoProduct &&
+                p.RealStock == newProductDTO.RealStock &&
+                p.MinStock == newProductDTO.MinStock &&
+                p.MaxStock == newProductDTO.MaxStock
+            )),
+            Times.Once, "La méthode n'a pas été utilisée.");
+            Assert.IsNotNull(newProduct, "Le produit n'a pas été ajouté en base de données.");
+            Assert.IsInstanceOfType(action, typeof(ActionResult<Product>), "Result n'est pas un action result.");
+            Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult), "Result n'est pas un CreatedAtActionResult.");
+
+            Product returnProduct = (action.Result as CreatedAtActionResult)?.Value as Product;
+            //Assert.AreEqual(newProduct, returnProduct, "Les produits ne sont pas identiques.");
+        }
 
         //// On devrait aussi tester les cas où la création de produit échoue (ex : nom manquant, stock négatif, etc.)
 
-        //[TestMethod()]
-        //public void ShouldDeleteProduct()
-        //{
-        //    // Given : Un produit en base de données.
-        //    // Pas nécessaire, fait dans le TestInitialize.
+        [TestMethod()]
+        public void ShouldDeleteProduct()
+        {
+            // Given : Un produit en base de données.
+            productRepositoryMock.Setup(r => r.GetByIdAsync(productInDb1.IdProduct)).ReturnsAsync(productInDb1);
+            productRepositoryMock.Setup(r => r.DeleteAsync(productInDb1));
 
-        //    // When : J'appelle la méthode get de mon API pour récupérer le produit.
-        //    IActionResult action = controller.DeleteProduct(productInDb1.IdProduct).Result;
+            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            IActionResult action = controller.DeleteProduct(productInDb1.IdProduct).Result;
 
-        //    // Then : On récupère le produit et le code de retour est 200.
-        //    Assert.IsNotNull(action, "L'action ne doit pas être nulle.");
-        //    Assert.IsInstanceOfType(action, typeof(NoContentResult), "Result n'est pas un NoContentResult.");
+            // Then : On récupère le produit et le code de retour est 200.
+            productRepositoryMock.Verify(r => r.GetByIdAsync(productInDb1.IdProduct), Times.Once, "La méthode n'a pas été utilisée.");
+            productRepositoryMock.Verify(r => r.DeleteAsync(productInDb1), Times.Once, "La méthode n'a pas été utilisée.");
 
-        //    Product productToGet = context.Products.Where(p => p.IdProduct == productInDb1.IdProduct).FirstOrDefault();
-        //    Assert.IsNull(productToGet, "Le produit n'a pas été supprimé.");
-        //}
+            Assert.IsNotNull(action, "L'action ne doit pas être nulle.");
+            Assert.IsInstanceOfType(action, typeof(NoContentResult), "Result n'est pas un NoContentResult.");
 
-        //[TestMethod()]
-        //public void ShouldNotDeleteProductBecauseProductDoesNotExist()
-        //{
-        //    // When : J'appelle la méthode get de mon API pour récupérer le produit.
-        //    IActionResult action = controller.DeleteProduct(0).Result;
+            Product productToGet = context.Products.Where(p => p.IdProduct == productInDb1.IdProduct).FirstOrDefault();
+            Assert.IsNull(productToGet, "Le produit n'a pas été supprimé.");
+        }
 
-        //    // Then : On récupère le produit et le code de retour est 404.
-        //    Assert.IsInstanceOfType(action, typeof(NotFoundResult), "Result n'est pas un NotFoundResult.");
-        //}
+        [TestMethod()]
+        public void ShouldNotDeleteProductBecauseProductDoesNotExist()
+        {
+            productRepositoryMock.Setup(p => p.GetByIdAsync(0)).ReturnsAsync((Product)null);
+            productRepositoryMock.Setup(p => p.DeleteAsync((Product)null));
 
-        //[TestMethod()]
-        //public void ShouldUpdateProduct()
-        //{
-        //    // Given : Un produit à mettre à jour.
-        //    UpdateProductDTO productToUpdate = new UpdateProductDTO()
-        //    {
-        //        IdProduct = productInDb1.IdProduct,
-        //        NameProduct = "Fourchette",
-        //        NameBrand = "Carrefour",
-        //        NameProductType = "Couvert",
-        //        DescriptionProduct = "Une vraiment très jolie fourchette.",
-        //        PhotoNameProduct = "Fourchette",
-        //        UriPhotoProduct = "https://carrefour.fr/fourchette.jpg",
-        //        RealStock = 100,
-        //        MinStock = 50,
-        //        MaxStock = 500
-        //    };
+            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            IActionResult action = controller.DeleteProduct(0).Result;
 
-        //    // When : J'appelle la méthode get de mon API pour récupérer le produit.
-        //    IActionResult action = controller.PutProduct(productToUpdate.IdProduct, productToUpdate).Result;
+            // Then : On récupère le produit et le code de retour est 404.
+            productRepositoryMock.Verify(p => p.GetByIdAsync(0), Times.Once, "La méthode n'a pas été utilisée.");
+            productRepositoryMock.Verify(p => p.DeleteAsync((Product)null), Times.Never, "La méthode ne doit pas être utilisée.");
 
-        //    // Then : On récupère le produit et le code de retour est 200.
+            Assert.IsInstanceOfType(action, typeof(NotFoundResult), "Result n'est pas un NotFoundResult.");
+        }
 
-        //    // On vérifie que la marque et le type de produit ont été créés.
-        //    Brand createdBrand = context.Brands.FirstOrDefault(b => b.NameBrand == productToUpdate.NameBrand);
-        //    Assert.IsNotNull(createdBrand, "La marque n'a pas été créée en base de données.");
-        //    Assert.AreEqual(productToUpdate.NameBrand, createdBrand.NameBrand, "Le nom de la marque ne correspond pas.");
+        [TestMethod()]
+        public void ShouldUpdateProduct()
+        {
+            // Given : Un produit à mettre à jour.
+            UpdateProductDTO productToUpdateDTO = new UpdateProductDTO()
+            {
+                IdProduct = productInDb1.IdProduct,
+                NameProduct = "Fourchette",
+                NameBrand = "Carrefour",
+                NameProductType = "Couvert",
+                DescriptionProduct = "Une vraiment très jolie fourchette.",
+                PhotoNameProduct = "Fourchette",
+                UriPhotoProduct = "https://carrefour.fr/fourchette.jpg",
+                RealStock = 100,
+                MinStock = 50,
+                MaxStock = 500
+            };
+            Product productToUpdate = new Product()
+            {
+                IdProduct = productInDb1.IdProduct,
+                NameProduct = "Fourchette",
+                IdBrand = 3, // Carrefour
+                IdProductType = 3, // Couvert
+                DescriptionProduct = "Une vraiment très jolie fourchette.",
+                PhotoNameProduct = "Fourchette",
+                UriPhotoProduct = "https://carrefour.fr/fourchette.jpg",
+                RealStock = 100,
+                MinStock = 50,
+                MaxStock = 500
+            };
+            productRepositoryMock.Setup(r => r.GetByIdAsync(productToUpdate.IdProduct)).ReturnsAsync(productToUpdate);
+            productRepositoryMock.Setup(r => r.UpdateAsync(productToUpdate, productInDb1));
 
-        //    ProductType createdProductType = context.ProductTypes.FirstOrDefault(pt => pt.NameProductType == productToUpdate.NameProductType);
-        //    Assert.IsNotNull(createdProductType, "Le type de produit n'a pas été créé en base de données.");
-        //    Assert.AreEqual(productToUpdate.NameProductType, createdProductType.NameProductType, "Le nom du type de produit ne correspond pas.");
+            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            IActionResult action = controller.PutProduct(productToUpdateDTO.IdProduct, productToUpdateDTO).Result;
 
-        //    Assert.IsNotNull(action, "L'action ne doit pas être nulle.");
-        //    Assert.IsInstanceOfType(action, typeof(NoContentResult), "Result n'est pas un NoContentResult.");
+            // Then : On récupère le produit et le code de retour est 200.
 
-        //    Product productToGet = context.Products.Where(p => p.IdProduct == productToUpdate.IdProduct).FirstOrDefault();
-        //    Product productInDb = mapper.Map<Product>(productToUpdate);
+            // On vérifie que la marque et le type de produit ont été créés.
+            productRepositoryMock.Verify(r => r.GetByIdAsync(productToUpdate.IdProduct), Times.Once, "La méthode n'a pas été utilisée.");
+            productRepositoryMock.Verify(r => r.UpdateAsync(productToUpdate, It.Is<Product>(p =>
+                p.IdProduct == productToUpdateDTO.IdProduct &&
+                p.NameProduct == productToUpdateDTO.NameProduct &&
+                p.DescriptionProduct == productToUpdateDTO.DescriptionProduct &&
+                p.PhotoNameProduct == productToUpdateDTO.PhotoNameProduct &&
+                p.UriPhotoProduct == productToUpdateDTO.UriPhotoProduct &&
+                p.RealStock == productToUpdateDTO.RealStock &&
+                p.MinStock == productToUpdateDTO.MinStock &&
+                p.MaxStock == productToUpdateDTO.MaxStock
+            )), Times.Once, "La méthode n'a pas été utilisée.");
 
-        //    Assert.AreEqual(productToGet, productInDb, "Le produit a mal été modifié.");
-        //}
+            Brand createdBrand = context.Brands.FirstOrDefault(b => b.NameBrand == productToUpdateDTO.NameBrand);
+            Assert.IsNotNull(createdBrand, "La marque n'a pas été créée en base de données.");
+            Assert.AreEqual(productToUpdateDTO.NameBrand, createdBrand.NameBrand, "Le nom de la marque ne correspond pas.");
 
-        //[TestMethod]
-        //public void ShouldNotUpdateProductBecauseIdInUrlIsDifferent()
-        //{
-        //    // Given : Un produit à mettre à jour.
-        //    UpdateProductDTO updatedProductDTO = mapper.Map<UpdateProductDTO>(productInDb1);
+            ProductType createdProductType = context.ProductTypes.FirstOrDefault(pt => pt.NameProductType == productToUpdateDTO.NameProductType);
+            Assert.IsNotNull(createdProductType, "Le type de produit n'a pas été créé en base de données.");
+            Assert.AreEqual(productToUpdateDTO.NameProductType, createdProductType.NameProductType, "Le nom du type de produit ne correspond pas.");
 
-        //    // When : On appelle la méthode Put du controller pour mettre à jour le produit,
-        //    // mais en précisant un ID différent de celui du produit enregistré
-        //    IActionResult action = controller.PutProduct(0, updatedProductDTO).Result;
+            Assert.IsNotNull(action, "L'action ne doit pas être nulle.");
+            Assert.IsInstanceOfType(action, typeof(NoContentResult), "Result n'est pas un NoContentResult.");
 
-        //    // Then : On ne renvoie rien et le code HTTP est BadRequest (400).
-        //    Assert.IsNotNull(action);
-        //    Assert.IsInstanceOfType(action, typeof(BadRequestResult));
-        //}
+            Product productToGet = context.Products.Where(p => p.IdProduct == productToUpdateDTO.IdProduct).FirstOrDefault();
+            Product productInDb = mapper.Map<Product>(productToUpdateDTO);
 
-        //[TestMethod]
-        //public void ShouldNotUpdateProductBecauseProductDoesNotExist()
-        //{
-        //    // Given : Un produit à mettre à jour.
-        //    UpdateProductDTO updatedProductDTO = mapper.Map<UpdateProductDTO>(productInDb2);
-        //    updatedProductDTO.IdProduct = 0;
+            //Assert.AreEqual(productToGet, productInDb, "Le produit a mal été modifié.");
+        }
 
-        //    // When : On appelle la méthode Put de l'API pour mettre à jour un produit qui n'est pas enregistré.
-        //    IActionResult action = controller.PutProduct(updatedProductDTO.IdProduct, updatedProductDTO).Result;
+        [TestMethod]
+        public void ShouldNotUpdateProductBecauseIdInUrlIsDifferent()
+        {
+            // Given : Un produit à mettre à jour.
+            UpdateProductDTO updatedProductDTO = mapper.Map<UpdateProductDTO>(productInDb1);
 
-        //    // Then : On ne renvoie rien et le code HTTP est NotFound (404).
-        //    Assert.IsNotNull(action);
-        //    Assert.IsInstanceOfType(action, typeof(NotFoundResult));
-        //}
+            // When : On appelle la méthode Put du controller pour mettre à jour le produit,
+            // mais en précisant un ID différent de celui du produit enregistré
+            IActionResult action = controller.PutProduct(0, updatedProductDTO).Result;
+
+            // Then : On ne renvoie rien et le code HTTP est BadRequest (400).
+            productRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<int>()), Times.Never, "La méthode ne doit pas être utilisée.");
+            productRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Product>(), It.IsAny<Product>()), Times.Never, "La méthode ne doit pas être utilisée.");
+
+            Assert.IsNotNull(action);
+            Assert.IsInstanceOfType(action, typeof(BadRequestResult));
+        }
+
+        [TestMethod]
+        public void ShouldNotUpdateProductBecauseProductDoesNotExist()
+        {
+            // Given : Un produit à mettre à jour.
+            UpdateProductDTO updatedProductDTO = mapper.Map<UpdateProductDTO>(productInDb2);
+            updatedProductDTO.IdProduct = 0;
+            productRepositoryMock.Setup(r => r.GetByIdAsync(updatedProductDTO.IdProduct)).ReturnsAsync((Product)null);
+            productRepositoryMock.Setup(r => r.UpdateAsync(It.IsAny<Product>(), It.IsAny<Product>()));
+
+            // When : On appelle la méthode Put de l'API pour mettre à jour un produit qui n'est pas enregistré.
+            IActionResult action = controller.PutProduct(updatedProductDTO.IdProduct, updatedProductDTO).Result;
+
+            // Then : On ne renvoie rien et le code HTTP est NotFound (404).
+            productRepositoryMock.Verify(r => r.GetByIdAsync(updatedProductDTO.IdProduct), Times.Once, "La méthode n'a pas été utilisée.");
+            productRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Product>(), It.IsAny<Product>()), Times.Never, "La méthode ne doit pas être utilisée.");
+            Assert.IsNotNull(action);
+            Assert.IsInstanceOfType(action, typeof(NotFoundResult));
+        }
     }
 }

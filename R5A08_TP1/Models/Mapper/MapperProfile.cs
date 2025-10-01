@@ -27,7 +27,9 @@ namespace R5A08_TP1.Models.Mapper
                 .ForMember(dest => dest.Restocking, opt => opt.MapFrom(src => src.RealStock < src.MinStock));
 
             // POST.
-            CreateMap<Product, CreateProductDTO>();
+            CreateMap<Product, CreateProductDTO>()
+                .ForMember(dest => dest.NameBrand, opt => opt.MapFrom(src => src.BrandNavigation != null ? src.BrandNavigation.NameBrand : null))
+                .ForMember(dest => dest.NameProductType, opt => opt.MapFrom(src => src.ProductTypeNavigation != null ? src.ProductTypeNavigation.NameProductType : null));
             CreateMap<CreateProductDTO, Product>()
                 .AfterMap((dto, product) =>
                 {
