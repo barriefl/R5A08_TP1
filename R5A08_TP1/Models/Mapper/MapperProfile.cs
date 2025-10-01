@@ -53,7 +53,6 @@ namespace R5A08_TP1.Models.Mapper
                 _context.SaveChanges();
             }
             product.IdBrand = brand?.IdBrand;
-            product.BrandNavigation = brand;
 
             ProductType? productType = _context.ProductTypes.FirstOrDefault(pt => pt.NameProductType == nameProductType);
             if (productType == null)
@@ -63,7 +62,6 @@ namespace R5A08_TP1.Models.Mapper
                 _context.SaveChanges();
             }
             product.IdProductType = productType?.IdProductType;
-            product.ProductTypeNavigation = productType;
         }
     }
 }

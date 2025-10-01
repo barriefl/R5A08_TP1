@@ -16,8 +16,6 @@ namespace R5A08_TP1.Controllers.Tests
         private AppDbContext context;
         private ProductsController controller;
         private IProductRepository productRepository;
-        private IBrandRepository brandRepository;
-        private IProductTypeRepository productTypeRepository;
         private IMapper mapper;
 
         public ProductsControllerTests()
@@ -26,8 +24,6 @@ namespace R5A08_TP1.Controllers.Tests
             context = new AppDbContext();
 
             productRepository = new ProductManager(context);
-            brandRepository = new BrandManager(context);
-            productTypeRepository = new ProductTypeManager(context);
 
             MapperConfiguration config = new MapperConfiguration(cfg =>
             {
@@ -35,14 +31,12 @@ namespace R5A08_TP1.Controllers.Tests
             });
             mapper = config.CreateMapper();
 
-            controller = new ProductsController(productRepository, brandRepository, productTypeRepository);
+            controller = new ProductsController(productRepository);
         }
 
         private Product productInDb1 = new Product();
         private Product productInDb2 = new Product();
         private int numberOfProductsInDb = 0;
-        private int numberOfBrandsInDb = 0;
-        private int numberOfProductTypesInDb = 0;
 
         [TestInitialize]
         public void TestInitialize()
@@ -108,8 +102,6 @@ namespace R5A08_TP1.Controllers.Tests
             context.SaveChanges();
 
             numberOfProductsInDb = context.Products.Count();
-            numberOfBrandsInDb = context.Brands.Count();
-            numberOfProductTypesInDb = context.ProductTypes.Count();
         }
 
         [TestMethod()]
@@ -281,6 +273,9 @@ namespace R5A08_TP1.Controllers.Tests
 
             Product productToGet = context.Products.Where(p => p.IdProduct == productToUpdate.IdProduct).FirstOrDefault();
             Product productInDb = mapper.Map<Product>(productToUpdate);
+
+            productToGet.BrandNavigation = null;
+            productToGet.ProductTypeNavigation = null;
 
             Assert.AreEqual(productToGet, productInDb, "Le produit a mal été modifié.");
         }

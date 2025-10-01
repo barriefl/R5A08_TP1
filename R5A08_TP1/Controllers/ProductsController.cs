@@ -18,16 +18,12 @@ namespace R5A08_TP1.Controllers
     public class ProductsController : Controller
     {
         private readonly IProductRepository productRepository;
-        private readonly IBrandRepository brandRepository;
-        private readonly IProductTypeRepository productTypeRepository;
         private readonly IMapper _mapper;
         private AppDbContext _context;
 
-        public ProductsController(IProductRepository productRepo, IBrandRepository brandRepo, IProductTypeRepository productTypeRepo)
+        public ProductsController(IProductRepository productRepo)
         {
             productRepository = productRepo;
-            brandRepository = brandRepo;
-            productTypeRepository = productTypeRepo;
 
             _context = new AppDbContext();
             MapperConfiguration config = new MapperConfiguration(cfg =>
@@ -105,31 +101,7 @@ namespace R5A08_TP1.Controllers
                 return NotFound();
             }
 
-            ActionResult<Brand> brandResult = await brandRepository.GetBrandByNameAsync(productDto.NameBrand);
-            Brand brand = brandResult.Value;
-            if (brand == null)
-            {
-                brand = new Brand { NameBrand = productDto.NameBrand };
-                await brandRepository.AddAsync(brand);
-            }
-
-            ActionResult<ProductType> productTypeResult = await productTypeRepository.GetProductTypeByNameAsync(productDto.NameProductType);
-            ProductType productType = productTypeResult.Value;
-            if (productType == null)
-            {
-                productType = new ProductType { NameProductType = productDto.NameProductType };
-                await productTypeRepository.AddAsync(productType);
-            }
-
-            Product product = productToUpdate.Value;
-
-            _mapper.Map(productDto, product);
-
-            product.BrandNavigation = brand;
-            product.ProductTypeNavigation = productType;
-
-            product.IdBrand = brand.IdBrand;
-            product.IdProductType = productType.IdProductType;
+            Product product = _mapper.Map(productDto, productToUpdate.Value);
 
             await productRepository.UpdateAsync(productToUpdate.Value, product);
             return NoContent();
@@ -146,29 +118,7 @@ namespace R5A08_TP1.Controllers
                 return BadRequest(ModelState);
             }
 
-            ActionResult<Brand> brandResult = await brandRepository.GetBrandByNameAsync(productDto.NameBrand);
-            Brand brand = brandResult.Value;
-            if (brand == null)
-            {
-                brand = new Brand { NameBrand = productDto.NameBrand };
-                await brandRepository.AddAsync(brand);
-            }
-
-            ActionResult<ProductType> productTypeResult = await productTypeRepository.GetProductTypeByNameAsync(productDto.NameProductType);
-            ProductType productType = productTypeResult.Value;
-            if (productType == null)
-            {
-                productType = new ProductType { NameProductType = productDto.NameProductType };
-                await productTypeRepository.AddAsync(productType);
-            }
-
             Product product = _mapper.Map<Product>(productDto);
-
-            product.BrandNavigation = brand;
-            product.ProductTypeNavigation = productType;
-
-            product.IdBrand = brand.IdBrand;
-            product.IdProductType = productType.IdProductType;
 
             await productRepository.AddAsync(product);
             return CreatedAtAction("GetById", new { id = product.IdProduct }, product);
