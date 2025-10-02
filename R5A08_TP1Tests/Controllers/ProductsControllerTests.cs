@@ -105,7 +105,7 @@ namespace R5A08_TP1.Controllers.Tests
         }
 
         [TestMethod()]
-        public void ShouldGetProduct()
+        public void ShouldGetProductById()
         {
             // Given : Un produit en base de données.
             // Pas nécessaire, fait dans le TestInitialize.
@@ -119,12 +119,12 @@ namespace R5A08_TP1.Controllers.Tests
             Assert.IsInstanceOfType(action.Result, typeof(OkObjectResult), "Le result doit être de type OkObjectResult.");
 
             ProductDetailsDTO returnProduct = (action.Result as OkObjectResult)?.Value as ProductDetailsDTO;
-            ProductDetailsDTO productInDb = mapper.Map<ProductDetailsDTO>(((OkObjectResult)action.Result).Value);
+            ProductDetailsDTO productInDb = mapper.Map<ProductDetailsDTO>(productInDb1);
             Assert.AreEqual(productInDb, returnProduct);
         }
 
         [TestMethod()]
-        public void GetProductShouldReturnNotFound()
+        public void GetProductByIdShouldReturnNotFound()
         {
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
             ActionResult<ProductDetailsDTO> action = controller.GetProductById(0).Result;
@@ -138,12 +138,12 @@ namespace R5A08_TP1.Controllers.Tests
         public void ShouldGetAllProducts()
         {
             // Given : Deux produits en base de données.
-            // Pas nécessaire, fait dans le TestInitialize.
+            List<Product> products = new List<Product>() { productInDb1, productInDb2 };
 
-            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            // When : J'appelle la méthode get de mon API pour récupérer les produits.
             ActionResult<IEnumerable<ProductDTO>> action = controller.GetProducts().Result;
 
-            // Then : On récupère le produit et le code de retour est 200.
+            // Then : On récupère les produits et le code de retour est 200.
             Assert.IsNotNull(action, "L'action ne doit pas être nulle.");
             Assert.IsInstanceOfType(action, typeof(ActionResult<IEnumerable<ProductDTO>>), "L'action doit être de type ActionResult<IEnumerable<ProductDTO>>.");
             Assert.IsInstanceOfType(action.Result, typeof(OkObjectResult), "Le result doit être de type OkObjectResult.");
@@ -151,7 +151,29 @@ namespace R5A08_TP1.Controllers.Tests
             List<ProductDTO> returnProducts = (action.Result as OkObjectResult)?.Value as List<ProductDTO>;
             Assert.AreEqual(numberOfProductsInDb, returnProducts.Count(), $"La liste de produits dans la base de données doit être de {numberOfProductsInDb}.");
 
-            List<ProductDTO> productsInDb = mapper.Map<IEnumerable<ProductDTO>>(((OkObjectResult)action.Result).Value).ToList();
+            List<ProductDTO> productsInDb = mapper.Map<IEnumerable<ProductDTO>>(products).ToList();
+            CollectionAssert.AreEqual(productsInDb, returnProducts, "La liste de produits dans la base de données et la liste de produits retournée ne sont pas les mêmes.");
+        }
+
+        [TestMethod()]
+        public void ShouldGetProductsByName()
+        {
+            // Given : Deux produits en base de données.
+            List<Product> products = new List<Product>() { productInDb1, productInDb2 };
+
+            // When : J'appelle la méthode get de mon API pour récupérer le produit.
+            ActionResult<IEnumerable<ProductDTO>> action = controller.GetProductsByName(productInDb1.NameProduct).Result;
+
+            // Then : On récupère le produit et le code de retour est 200.
+            Assert.IsNotNull(action, "L'action ne doit pas être nulle.");
+            Assert.IsInstanceOfType(action, typeof(ActionResult<IEnumerable<ProductDTO>>), "L'action doit être de type ActionResult<IEnumerable<ProductDTO>>.");
+            Assert.IsInstanceOfType(action.Result, typeof(OkObjectResult), "Le result doit être de type OkObjectResult.");
+
+            List<ProductDTO> returnProducts = (action.Result as OkObjectResult)?.Value as List<ProductDTO>;
+            Assert.AreEqual(1, returnProducts.Count(), $"La liste de produits dans la base de données doit être de {1}.");
+
+            products = products.Where(p => p.NameProduct.Contains(productInDb1.NameProduct, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            List<ProductDTO> productsInDb = mapper.Map<IEnumerable<ProductDTO>>(products).ToList();
             CollectionAssert.AreEqual(productsInDb, returnProducts, "La liste de produits dans la base de données et la liste de produits retournée ne sont pas les mêmes.");
         }
 
@@ -175,7 +197,7 @@ namespace R5A08_TP1.Controllers.Tests
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
             ActionResult<Product> action = controller.PostProduct(newProductInDb).Result;
 
-            // Then : On récupère le produit et le code de retour est 200.
+            // Then : On récupère le produit et le code de retour est 201.
 
             // On vérifie que la marque et le type de produit ont été créés.
             Brand createdBrand = context.Brands.FirstOrDefault(b => b.NameBrand == newProductInDb.NameBrand);
@@ -202,12 +224,9 @@ namespace R5A08_TP1.Controllers.Tests
             Assert.IsInstanceOfType(action, typeof(ActionResult<Product>), "Result n'est pas un action result.");
             Assert.IsInstanceOfType(action.Result, typeof(CreatedAtActionResult), "Result n'est pas un CreatedAtActionResult.");
 
-            //Product returnProduct = mapper.Map<Product>(newProductInDb);
             Product returnProduct = (action.Result as CreatedAtActionResult)?.Value as Product;
             Assert.AreEqual(expectedProduct, returnProduct, "Les produits ne sont pas identiques.");
         }
-
-        // On devrait aussi tester les cas où la création de produit échoue (ex : nom manquant, stock négatif, etc.)
 
         [TestMethod()]
         public void ShouldDeleteProduct()
@@ -218,7 +237,7 @@ namespace R5A08_TP1.Controllers.Tests
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
             IActionResult action = controller.DeleteProduct(productInDb1.IdProduct).Result;
 
-            // Then : On récupère le produit et le code de retour est 200.
+            // Then : On récupère le produit et le code de retour est 204.
             Assert.IsNotNull(action, "L'action ne doit pas être nulle.");
             Assert.IsInstanceOfType(action, typeof(NoContentResult), "Result n'est pas un NoContentResult.");
 
@@ -257,7 +276,7 @@ namespace R5A08_TP1.Controllers.Tests
             // When : J'appelle la méthode get de mon API pour récupérer le produit.
             IActionResult action = controller.PutProduct(productToUpdate.IdProduct, productToUpdate).Result;
 
-            // Then : On récupère le produit et le code de retour est 200.
+            // Then : On récupère le produit et le code de retour est 204.
 
             // On vérifie que la marque et le type de produit ont été créés.
             Brand createdBrand = context.Brands.FirstOrDefault(b => b.NameBrand == productToUpdate.NameBrand);
