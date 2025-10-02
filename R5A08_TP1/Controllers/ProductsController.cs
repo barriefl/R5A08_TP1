@@ -19,7 +19,7 @@ namespace R5A08_TP1.Controllers
     {
         private readonly IProductRepository productRepository;
         private readonly IMapper _mapper;
-        private AppDbContext _context;
+        private readonly AppDbContext _context;
 
         /// <summary>
         /// Constructeur pour le contrôleur ProductsController.
