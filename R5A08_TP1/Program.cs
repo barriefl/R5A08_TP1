@@ -37,7 +37,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazor",
         policy => policy
-            .WithOrigins("https://localhost:7021") // URL de ton Blazor.
+            .WithOrigins("https://localhost:7021", "http://localhost:5020") // URL de ton Blazor.
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
