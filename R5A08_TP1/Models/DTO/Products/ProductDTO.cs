@@ -1,5 +1,4 @@
-﻿
-namespace R5A08_TP1.Models.DTO
+﻿namespace R5A08_TP1.Models.DTO.Products
 {
     public class ProductDTO
     {

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using R5A08_TP1.Models.DTO;
+using R5A08_TP1.Models.DTO.Brands;
+using R5A08_TP1.Models.DTO.Products;
+using R5A08_TP1.Models.DTO.ProductTypes;
 using R5A08_TP1.Models.EntityFramework;
 using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
@@ -43,6 +45,13 @@ namespace R5A08_TP1.Models.Mapper
                 {
                     SetBrandAndProductType(product, dto.NameBrand, dto.NameProductType);
                 });
+
+            // ALL.
+            CreateMap<Brand, BrandDTO>();
+            CreateMap<BrandDTO, Brand>();
+
+            CreateMap<ProductType, ProductTypeDTO>();
+            CreateMap<ProductTypeDTO, ProductType>();
         }
 
         public void SetBrandAndProductType(Product product, string nameBrand, string nameProductType)

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using R5A08_TP1.Models.DTO;
+using R5A08_TP1.Models.DTO.Products;
 using R5A08_TP1.Models.EntityFramework;
 using R5A08_TP1.Models.Mapper;
 using R5A08_TP1.Models.Repository;

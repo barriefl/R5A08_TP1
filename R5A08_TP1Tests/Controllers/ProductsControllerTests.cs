@@ -5,7 +5,7 @@ using R5A08_TP1.Models.DataManager;
 using R5A08_TP1.Models.EntityFramework;
 using R5A08_TP1.Models.Mapper;
 using R5A08_TP1.Models.Repository;
-using R5A08_TP1.Models.DTO;
+using R5A08_TP1.Models.DTO.Products;
 
 namespace R5A08_TP1.Controllers.Tests
 {
