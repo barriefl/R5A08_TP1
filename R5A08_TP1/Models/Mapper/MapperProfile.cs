@@ -46,7 +46,14 @@ namespace R5A08_TP1.Models.Mapper
                     SetBrandAndProductType(product, dto.NameBrand, dto.NameProductType);
                 });
 
-            // ALL.
+            // GET / PUT.
+            CreateMap<Brand, BrandDetailsDTO>();
+            CreateMap<BrandDetailsDTO, Brand>();
+
+            CreateMap<ProductType, ProductTypeDetailsDTO>();
+            CreateMap<ProductTypeDetailsDTO, ProductType>();
+
+            // GET ALL / POST.
             CreateMap<Brand, BrandDTO>();
             CreateMap<BrandDTO, Brand>();
 

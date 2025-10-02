@@ -73,7 +73,7 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Brand>> GetBrand(int id)
+        public async Task<ActionResult<BrandDetailsDTO>> GetBrandById(int id)
         {
             ActionResult<Brand> brandResult = await _brandRepository.GetByIdAsync(id);
             Brand brand = brandResult.Value;
@@ -83,7 +83,7 @@ namespace R5A08_TP1.Controllers
                 return NotFound();
             }
 
-            BrandDTO brandDto = _mapper.Map<BrandDTO>(brand);
+            BrandDetailsDTO brandDto = _mapper.Map<BrandDetailsDTO>(brand);
             return Ok(brandDto);
         }
 
@@ -102,7 +102,7 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Brand>> GetBrandByName(string name)
+        public async Task<ActionResult<BrandDetailsDTO>> GetBrandByName(string name)
         {
             ActionResult<Brand> brandResult = await _brandRepository.GetBrandByNameAsync(name);
             Brand brand = brandResult.Value;
@@ -112,7 +112,7 @@ namespace R5A08_TP1.Controllers
                 return NotFound();
             }
 
-            BrandDTO brandDto = _mapper.Map<BrandDTO>(brand);
+            BrandDetailsDTO brandDto = _mapper.Map<BrandDetailsDTO>(brand);
             return Ok(brandDto);
         }
 
@@ -133,7 +133,7 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        public async Task<IActionResult> PutBrand(int id, BrandDTO brandDto)
+        public async Task<IActionResult> PutBrand(int id, BrandDetailsDTO brandDto)
         {
             if (id != brandDto.IdBrand)
             {
