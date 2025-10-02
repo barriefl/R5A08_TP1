@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using R5A08_TP1.Models.DTO;
+using R5A08_TP1.Models.DTO.Brands;
+using R5A08_TP1.Models.DTO.Products;
 using R5A08_TP1.Models.EntityFramework;
 using R5A08_TP1.Models.Mapper;
 using R5A08_TP1.Models.Repository;
@@ -18,6 +20,7 @@ namespace R5A08_TP1.Controllers
     public class BrandsController : ControllerBase
     {
         private readonly IBrandRepository _brandRepository;
+        private readonly IMapper _mapper;
         private readonly AppDbContext _context;
 
         /// <summary>
@@ -29,6 +32,11 @@ namespace R5A08_TP1.Controllers
             _brandRepository = brandRepository;
 
             _context = new AppDbContext();
+            MapperConfiguration config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MapperProfile(_context));
+            });
+            _mapper = config.CreateMapper();
         }
 
         /// <summary>
@@ -41,9 +49,13 @@ namespace R5A08_TP1.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
+        public async Task<ActionResult<IEnumerable<BrandDTO>>> GetBrands()
         {
-            return await _brandRepository.GetAllAsync();
+            ActionResult<IEnumerable<Brand>> brandsResult = await _brandRepository.GetAllAsync();
+            IEnumerable<Brand> brands = brandsResult.Value;
+
+            IEnumerable<BrandDTO> brandsDto = _mapper.Map<IEnumerable<BrandDTO>>(brands);
+            return Ok(brandsDto);
         }
 
         /// <summary>
@@ -63,14 +75,16 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<Brand>> GetBrand(int id)
         {
-            ActionResult<Brand> brand = await _brandRepository.GetByIdAsync(id);
+            ActionResult<Brand> brandResult = await _brandRepository.GetByIdAsync(id);
+            Brand brand = brandResult.Value;
 
-            if (brand.Value == null)
+            if (brand == null)
             {
                 return NotFound();
             }
 
-            return brand;
+            BrandDTO brandDto = _mapper.Map<BrandDTO>(brand);
+            return Ok(brandDto);
         }
 
         /// <summary>
@@ -90,21 +104,23 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<Brand>> GetBrandByName(string name)
         {
-            ActionResult<Brand> brand = await _brandRepository.GetBrandByNameAsync(name);
+            ActionResult<Brand> brandResult = await _brandRepository.GetBrandByNameAsync(name);
+            Brand brand = brandResult.Value;
 
-            if (brand.Value == null)
+            if (brand == null)
             {
                 return NotFound();
             }
 
-            return brand;
+            BrandDTO brandDto = _mapper.Map<BrandDTO>(brand);
+            return Ok(brandDto);
         }
 
         /// <summary>
         /// Modifie une marque.
         /// </summary>
         /// <param name="id">L'id de la marque.</param>
-        /// <param name="brand">L'objet marque.</param>
+        /// <param name="brandDto">L'objet marque.</param>
         /// <returns>Une réponse HTTP 204 NoContent.</returns>
         /// <response code="204">La marque a été modifiée avec succès.</response>
         /// <response code="400">L'id donné ne correspond pas à l'id de la marque.</response>
@@ -117,9 +133,9 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        public async Task<IActionResult> PutBrand(int id, Brand brand)
+        public async Task<IActionResult> PutBrand(int id, BrandDTO brandDto)
         {
-            if (id != brand.IdBrand)
+            if (id != brandDto.IdBrand)
             {
                 return BadRequest();
             }
@@ -135,6 +151,8 @@ namespace R5A08_TP1.Controllers
                 return NotFound();
             }
 
+            Brand brand = _mapper.Map(brandDto, brandToUpdate.Value);
+
             await _brandRepository.UpdateAsync(brandToUpdate.Value, brand);
             return NoContent();
         }
@@ -142,7 +160,7 @@ namespace R5A08_TP1.Controllers
         /// <summary>
         /// Créer une marque.
         /// </summary>
-        /// <param name="brand">L'objet marque.</param>
+        /// <param name="brandDto">L'objet marque.</param>
         /// <returns>Une réponse HTTP 201 Created.</returns>
         /// <response code="201">La marque a été créée avec succès.</response>
         /// <response code="400">Le format de la marque est incorrect.</response>
@@ -153,12 +171,14 @@ namespace R5A08_TP1.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        public async Task<ActionResult<Brand>> PostBrand(Brand brand)
+        public async Task<ActionResult<Brand>> PostBrand(BrandDTO brandDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            Brand brand = _mapper.Map<Brand>(brandDto);
 
             await _brandRepository.AddAsync(brand);
             return CreatedAtAction("GetById", new { id = brand.IdBrand }, brand);
