@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace R5A08_TP1.Models.EntityFramework
 {
     [Table("t_e_producttype_prty")]
-    public class ProductType
+    public partial class ProductType
     {
         [Key]
         [Column("prty_id")]
