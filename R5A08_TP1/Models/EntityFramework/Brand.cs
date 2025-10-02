@@ -10,6 +10,8 @@ namespace R5A08_TP1.Models.EntityFramework
         [Column("bran_id")]
         public int IdBrand { get; set; }
 
+        [Required(ErrorMessage = "Brand name is required.")]
+        [StringLength(100, ErrorMessage = "Brand name cannot exceed 100 characters.")]
         [Column("bran_name")]
         public string NameBrand { get; set; } = null!;
 
