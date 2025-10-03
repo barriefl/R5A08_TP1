@@ -7,6 +7,14 @@ namespace R5A08_TP1.Models.EntityFramework
     [Table("t_e_product_prod")]
     public partial class Product
     {
+        public enum Disponibility
+        {
+            Indisponible = 0,
+            Disponible = 1,
+            EnRupture = 2,
+            EnPrecommande = 3
+        }
+
         [Key]
         [Column("prod_id")]
         public int IdProduct { get; set; }
@@ -40,17 +48,24 @@ namespace R5A08_TP1.Models.EntityFramework
         [Column("prod_uriphoto")]
         public string UriPhotoProduct { get; set; }
 
-        [Range(0, 100, ErrorMessage = "Real stock must be between zero or 100.")]
+        [Range(0, 100, ErrorMessage = "Real stock must be between zero and 100.")]
         [Column("prod_realstock")]
         public int RealStock { get; set; }
 
-        [Range(0, 100, ErrorMessage = "Min stock must be between zero or 100.")]
+        [Range(0, 100, ErrorMessage = "Min stock must be between zero and 100.")]
         [Column("prod_minstock")]
         public int MinStock { get; set; }
 
-        [Range(0, 100, ErrorMessage = "Max stock must be zero or 100.")]
+        [Range(0, 100, ErrorMessage = "Max stock must be zero and 100.")]
         [Column("prod_maxstock")]
         public int MaxStock { get; set; }
+
+        [Range(0, 100000, ErrorMessage = "Price must be between zero and 100000.")]
+        [Column("prod_price")]
+        public int Price { get; set; }
+
+        [Column("prod_isdisponible")]
+        public Disponibility IsDisponible { get; set; }
 
         [ForeignKey(nameof(ProductType.IdProductType))]
         [InverseProperty(nameof(ProductType.RelatedProductsProductType))]
